@@ -1,6 +1,6 @@
 require('@nomiclabs/hardhat-waffle')
 
-require('./tasks/pin')
+require('./tasks/upload')
 
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
