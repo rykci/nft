@@ -11,10 +11,7 @@ task('upload', 'Upload directory to IPFS')
     // read the directory
     const dir = await fs.readdir(taskArgs.dir)
 
-    /* create array of objects for each file in directory
-     * path: the file name
-     * content: use readFile to get content
-     */
+    // maps files to array of objects for ipfs addAll function
     const files = await Promise.all(
       dir.map(async (file) => {
         return {
@@ -24,10 +21,44 @@ task('upload', 'Upload directory to IPFS')
       }),
     )
 
-    // uploads each file and wraps with a directory
-    for await (const file of ipfs.addAll(files, {
-      wrapWithDirectory: true,
-    })) {
-      console.log(file)
-    }
+    const fileData = await uploadToIPFS(ipfs, files)
+    const dirData = fileData.pop()
+    console.log(dirData)
+
+    const fileMetadata = fileData.map((file, i) => {
+      return {
+        path: `${i + 1}.json`,
+        content: JSON.stringify({
+          name: file.path.split('.')[0],
+          image: `http://192.168.88.41:5050/ipfs/${file.cid}`,
+        }),
+      }
+    })
+
+    const metadata = await uploadToIPFS(ipfs, fileMetadata)
+
+    console.log(metadata.pop())
   })
+
+const uploadToIPFS = async (ipfs, files) => {
+  let fileData = []
+
+  // uploads each file and wraps with a directory
+  for await (const file of ipfs.addAll(files, {
+    wrapWithDirectory: true,
+    progress: (bytes, file) => {
+      console.log(`Uploading ${file} Bytes: ${bytes}`)
+    },
+  })) {
+    //console.log(file)
+
+    /* addAll returns object for each added file
+      path: file name,
+      cid: ipfs hash,
+      size: size of file
+    */
+    fileData.push(file)
+  }
+
+  return fileData
+}
