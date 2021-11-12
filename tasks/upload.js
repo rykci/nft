@@ -25,6 +25,7 @@ task('upload', 'Upload directory to IPFS')
     const dirData = fileData.pop()
     console.log(dirData)
 
+    /*
     const fileMetadata = fileData.map((file, i) => {
       return {
         path: `${i + 1}.json`,
@@ -34,6 +35,15 @@ task('upload', 'Upload directory to IPFS')
         }),
       }
     })
+    */
+
+    const fileMetadata = {
+      path: `${taskArgs.dir}.json`,
+      content: JSON.stringify({
+        name: taskArgs.dir,
+        directory: `http://192.168.88.41:5050/ipfs/${dirData.cid}`,
+      }),
+    }
 
     const metadata = await uploadToIPFS(ipfs, fileMetadata)
 
