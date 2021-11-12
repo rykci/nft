@@ -26,10 +26,13 @@ task('upload', 'Upload directory to IPFS')
     const dirData = fileData.pop()
     console.log(dirData)
 
+    // gets name of directory rather than the whole path
+    const metadataName = taskArgs.dir.split('/').pop()
+
     const fileMetadata = {
-      path: `${taskArgs.dir}.json`,
+      path: `${metadataName}.json`,
       content: JSON.stringify({
-        name: taskArgs.dir, // directory name
+        name: metadataName, // directory name
         image: `${process.env.READ_GATEWAY}QmQbF9mJEYUdLaWgw568abFiwvR1udQsfmuLyhejTiZ2DG`, // placeholder database icon for opensea
         directory: `${process.env.READ_GATEWAY}${dirData.cid}`, // gateway to files of directory on IPFS
       }),
