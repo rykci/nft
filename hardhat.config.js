@@ -18,6 +18,7 @@ module.exports = {
     mumbai: {
       url: process.env.MUMBAI_URL,
       accounts: [process.env.PRIVATE_KEY],
+      contract: '0x108f370628BcE91F4B8d781d59Ae11f12BF4DDf6',
     },
   },
 }

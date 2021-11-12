@@ -4,7 +4,7 @@ require('dotenv').config()
 task('mint', 'mint NFT supplying contract and tokenURI')
   .addParam('cid', 'IPFS cid of the NFT metadata')
   .setAction(async (taskArgs) => {
-    const contractAddr = process.env.CONTRACT_ADDRESS
+    const contractAddr = network.config.contract
     const networkId = network.name
     console.log('Contract address: ', contractAddr, ' on network ', networkId)
 
@@ -18,5 +18,6 @@ task('mint', 'mint NFT supplying contract and tokenURI')
     const databaseMinter = await MinterContract.attach(contractAddr)
     const tx = await databaseMinter.mintData(signer.address, taskArgs.cid)
     await tx.wait()
-    console.log('NFT minted. Transaction Hash: ', tx.hash)
+    const tokenId = await databaseMinter.totalSupply()
+    console.log(`NFT ${tokenId} minted. Transaction Hash: ${tx.hash}`)
   })

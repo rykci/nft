@@ -1,12 +1,13 @@
 const { task } = require('hardhat/config')
 const { create } = require('ipfs-http-client')
 const fs = require('fs').promises
+require('dotenv').config()
 
 task('upload', 'Upload directory to IPFS')
   .addParam('dir', 'The path of the directory to upload')
   .setAction(async (taskArgs) => {
     // reate an instance of the HTTP API client
-    const ipfs = create('/ip4/192.168.88.41/tcp/5001')
+    const ipfs = create(process.env.WRITE_GATEWAY)
 
     // read the directory
     const dir = await fs.readdir(taskArgs.dir)
@@ -25,37 +26,26 @@ task('upload', 'Upload directory to IPFS')
     const dirData = fileData.pop()
     console.log(dirData)
 
-    /*
-    const fileMetadata = fileData.map((file, i) => {
-      return {
-        path: `${i + 1}.json`,
-        content: JSON.stringify({
-          name: file.path.split('.')[0],
-          image: `http://192.168.88.41:5050/ipfs/${file.cid}`,
-        }),
-      }
-    })
-    */
-
     const fileMetadata = {
       path: `${taskArgs.dir}.json`,
       content: JSON.stringify({
-        name: taskArgs.dir,
-        directory: `http://192.168.88.41:5050/ipfs/${dirData.cid}`,
+        name: taskArgs.dir, // directory name
+        image: `${process.env.READ_GATEWAY}QmQbF9mJEYUdLaWgw568abFiwvR1udQsfmuLyhejTiZ2DG`, // placeholder database icon for opensea
+        directory: `${process.env.READ_GATEWAY}${dirData.cid}`, // gateway to files of directory on IPFS
       }),
     }
 
-    const metadata = await uploadToIPFS(ipfs, fileMetadata)
+    const metadata = await uploadToIPFS(ipfs, fileMetadata, false)
 
     console.log(metadata.pop())
   })
 
-const uploadToIPFS = async (ipfs, files) => {
+const uploadToIPFS = async (ipfs, files, wrap = true) => {
   let fileData = []
 
   // uploads each file and wraps with a directory
   for await (const file of ipfs.addAll(files, {
-    wrapWithDirectory: true,
+    wrapWithDirectory: wrap,
     progress: (bytes, file) => {
       console.log(`Uploading ${file} Bytes: ${bytes}`)
     },

@@ -12,8 +12,8 @@ contract DatabaseMinter is ERC721URIStorage, Ownable {
     string public baseURI;
 
     // set contract name and ticker. 
-    constructor(string memory tokenName, string memory symbol) ERC721(tokenName, symbol) {
-        setBaseURI("http://192.168.88.41:5050/ipfs/");
+    constructor(string memory tokenName, string memory symbol, string memory _intiBaseURI) ERC721(tokenName, symbol) {
+        setBaseURI(_intiBaseURI);
     }
 
 
@@ -43,7 +43,8 @@ contract DatabaseMinter is ERC721URIStorage, Ownable {
     function setBaseURI(string memory _newBaseURI) public onlyOwner {
         baseURI = _newBaseURI;
     }
-    
+
+
     // This will payout the owner the contract balance.
     // Do not remove this otherwise you will not be able to withdraw the funds.
     // =============================================================================
