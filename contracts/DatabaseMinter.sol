@@ -12,8 +12,8 @@ contract DatabaseMinter is ERC721URIStorage, Ownable {
     string public baseURI;
 
     // set contract name and ticker. 
-    constructor(string memory tokenName, string memory symbol, string memory _intiBaseURI) ERC721(tokenName, symbol) {
-        setBaseURI(_intiBaseURI);
+    constructor(string memory tokenName, string memory symbol, string memory _initBaseURI) ERC721(tokenName, symbol) {
+        setBaseURI(_initBaseURI);
     }
 
 
@@ -48,8 +48,8 @@ contract DatabaseMinter is ERC721URIStorage, Ownable {
     // This will payout the owner the contract balance.
     // Do not remove this otherwise you will not be able to withdraw the funds.
     // =============================================================================
-  function withdraw() public payable onlyOwner {
+  /*function withdraw() public payable onlyOwner {
       (bool os, ) = payable(owner()).call{value: address(this).balance}("");
     require(os);
-  }
+  }*/
 }

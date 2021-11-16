@@ -1,10 +1,14 @@
 # nft
 
+## Pack directory into .car
+
+Use `npx hardhat pack --dir <PATH>` to pack a directory into a .car file of the same name. The upload command will be logged to the console.
+
 ## Upload files to IPFS:
 
-Use command `npx hardhat upload --dir <PATH>` to upload your directory to our IPFS server.
+Use command `npx hardhat upload --car <PATH>.car` to upload your .car file to our IPFS server.
 It will also upload metadata to IPFS.
-The CID of the image directory and metadata directory will be logged to the console.
+The CID of the .car file and metadata JSON file will be logged to the console.
 
 ## Deploy Contract
 

@@ -1,67 +1,46 @@
 const { task } = require('hardhat/config')
 const { create } = require('ipfs-http-client')
 const fs = require('fs').promises
+
 require('dotenv').config()
 
 task('upload', 'Upload directory to IPFS')
-  .addParam('dir', 'The path of the directory to upload')
+  .addParam('car', 'The path of the .car file you wish to upload to IPFS')
+  .addOptionalParam('name', 'name of the NFT')
+  .addOptionalParam('desc', 'NFT description')
   .setAction(async (taskArgs) => {
-    // reate an instance of the HTTP API client
+    // create an instance of the HTTP API client
     const ipfs = create(process.env.WRITE_GATEWAY)
 
-    // read the directory
-    const dir = await fs.readdir(taskArgs.dir)
+    let path = taskArgs.car
 
-    // maps files to array of objects for ipfs addAll function
-    const files = await Promise.all(
-      dir.map(async (file) => {
-        return {
-          path: file,
-          content: await fs.readFile(`${taskArgs.dir}/${file}`),
-        }
-      }),
-    )
+    const fileName = path.split('/').pop()
 
-    const fileData = await uploadToIPFS(ipfs, files)
-    const dirData = fileData.pop()
-    console.log(dirData)
+    const file = {
+      path: fileName, //get path name
+      content: await fs.readFile(path),
+    }
 
-    // gets name of directory rather than the whole path
-    const metadataName = taskArgs.dir.split('/').pop()
+    const uploadResult = await ipfs.add(file, { wrapWithDirectory: true })
+    console.log(uploadResult)
 
+    const metadataName = fileName.split('.')[0]
     const fileMetadata = {
       path: `${metadataName}.json`,
       content: JSON.stringify({
-        name: metadataName, // directory name
-        image: `${process.env.READ_GATEWAY}QmQbF9mJEYUdLaWgw568abFiwvR1udQsfmuLyhejTiZ2DG`, // placeholder database icon for opensea
-        directory: `${process.env.READ_GATEWAY}${dirData.cid}`, // gateway to files of directory on IPFS
+        name: taskArgs.name || metadataName, // directory name
+        description: taskArgs.desc,
+        //image: `${process.env.READ_GATEWAY}QmQbF9mJEYUdLaWgw568abFiwvR1udQsfmuLyhejTiZ2DG`, // placeholder database icon for opensea
+        data: `${process.env.READ_GATEWAY}${uploadResult.cid}`, // gateway to files of directory on IPFS
+        attributes: [
+          {
+            display_type: 'number',
+            trait_type: 'Size',
+            value: uploadResult.size,
+          },
+        ],
       }),
     }
 
-    const metadata = await uploadToIPFS(ipfs, fileMetadata, false)
-
-    console.log(metadata.pop())
+    console.log(await ipfs.add(fileMetadata))
   })
-
-const uploadToIPFS = async (ipfs, files, wrap = true) => {
-  let fileData = []
-
-  // uploads each file and wraps with a directory
-  for await (const file of ipfs.addAll(files, {
-    wrapWithDirectory: wrap,
-    progress: (bytes, file) => {
-      console.log(`Uploading ${file} Bytes: ${bytes}`)
-    },
-  })) {
-    //console.log(file)
-
-    /* addAll returns object for each added file
-      path: file name,
-      cid: ipfs hash,
-      size: size of file
-    */
-    fileData.push(file)
-  }
-
-  return fileData
-}
