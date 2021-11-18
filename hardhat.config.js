@@ -6,7 +6,7 @@ require('./tasks/mint')
 require('./tasks/tokenURI')
 require('./tasks/pack')
 require('./tasks/deploy')
-require('./tasks/dev')
+//require('./tasks/dev')
 
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
@@ -24,8 +24,7 @@ module.exports = {
       contract: '0x33317205b442C98C276B3F51EEbC84c6B2F8c9dF',
     },
     rinkeby: {
-      url:
-        'https://eth-rinkeby.alchemyapi.io/v2/JpRokS66sMaDD680W2NWwqhLuqDC1f7l',
+      url: process.env.RINKEBY_URL,
       accounts: [process.env.PRIVATE_KEY],
       contract: '0xa03ab8D39BBBfE6e9B47FA219B5D0663DB7D67Fa',
     },

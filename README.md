@@ -21,3 +21,9 @@ Use command `npx hardhat mint --cid <CID>` to mint NFT to the Mumbai network (de
 ## TokenURI
 
 Use command `npx hardhat tokenURI --id <tokenID>` to retrieve the tokenURI of a minted NFT.
+
+## View NFT!
+
+After minting, the NFT should be available to view on OpenSea (testnet). You can search for your collection (your deployed contract) using the contract address here: https://testnets.opensea.io/get-listed
+
+Select the correct network and paste the contract address. Your collection will be opened on a new tab. NFT metadata will take some time to load, Opensea will call the tokenURI function in the contract.
