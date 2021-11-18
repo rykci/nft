@@ -4,7 +4,8 @@ require('dotenv').config()
 require('./tasks/upload')
 require('./tasks/mint')
 require('./tasks/tokenURI')
-require('./tasks/car')
+require('./tasks/pack')
+require('./tasks/deploy')
 require('./tasks/dev')
 
 // You need to export an object to set up your config
@@ -20,7 +21,7 @@ module.exports = {
     mumbai: {
       url: process.env.MUMBAI_URL,
       accounts: [process.env.PRIVATE_KEY],
-      contract: '0xA76fCe61D665F7F438a15A733adb725D61D0a009',
+      contract: '0x33317205b442C98C276B3F51EEbC84c6B2F8c9dF',
     },
     rinkeby: {
       url:

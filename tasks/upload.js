@@ -14,25 +14,32 @@ task('upload', 'Upload directory to IPFS')
 
     let path = taskArgs.car
 
+    // fileName is the name of the .car file
     const fileName = path.split('/').pop()
 
+    // file object for IPFS api
     const file = {
       path: fileName, //get path name
-      content: await fs.readFile(path),
+      content: await fs.readFile(path), //.car file
     }
 
+    // upload to IPFS and return object with size and CID
     const uploadResult = await ipfs.add(file, { wrapWithDirectory: true })
     console.log(uploadResult)
 
+    // the name of the .car file without the .car extension
     const metadataName = fileName.split('.')[0]
+
+    // metadata file object for IPFS api
     const fileMetadata = {
-      path: `${metadataName}.json`,
+      path: `${metadataName}.json`, // add JSON extension
       content: JSON.stringify({
         name: taskArgs.name || metadataName, // directory name
         description: taskArgs.desc,
         //image: `${process.env.READ_GATEWAY}QmQbF9mJEYUdLaWgw568abFiwvR1udQsfmuLyhejTiZ2DG`, // placeholder database icon for opensea
         data: `${process.env.READ_GATEWAY}${uploadResult.cid}`, // gateway to files of directory on IPFS
         attributes: [
+          // display the size on OpenSea
           {
             display_type: 'number',
             trait_type: 'Size',
@@ -42,5 +49,6 @@ task('upload', 'Upload directory to IPFS')
       }),
     }
 
+    // upload to IPFS and return object with size and CID
     console.log(await ipfs.add(fileMetadata))
   })
