@@ -5,6 +5,7 @@ require('./tasks/upload')
 require('./tasks/mint')
 require('./tasks/tokenURI')
 require('./tasks/pack')
+require('./tasks/zip')
 require('./tasks/deploy')
 //require('./tasks/dev')
 
