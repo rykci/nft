@@ -5,14 +5,14 @@ const fs = require('fs').promises
 require('dotenv').config()
 
 task('upload', 'Upload directory to IPFS')
-  .addParam('car', 'The path of the .car file you wish to upload to IPFS')
+  .addParam('file', 'The path of the file you wish to upload to IPFS')
   .addOptionalParam('name', 'name of the NFT')
   .addOptionalParam('desc', 'NFT description')
   .setAction(async (taskArgs) => {
     // create an instance of the HTTP API client
     const ipfs = create(process.env.WRITE_GATEWAY)
 
-    let path = taskArgs.car
+    let path = taskArgs.file
 
     // fileName is the name of the .car file
     const fileName = path.split('/').pop()
