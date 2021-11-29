@@ -7,28 +7,37 @@ require('dotenv').config()
 task('mcp', 'Upload file to MCP and mint NFT')
   .addParam('file', '')
   .addOptionalParam('name', '')
-  .addOptionalParam('description', '')
+  .addOptionalParam('desc', '')
   .setAction(async (taskArgs) => {
     if (!network.config.mcp.authToken) {
       console.log('Please Login for Auth Token')
     } else {
       const file = await fs.readFile(taskArgs.file) // read file
 
+      console.log('Uploading file to MCP...')
       const upload = await mcpUpload(taskArgs.file.split('/').pop(), file) // upload file to MCP
 
       // generate metadata using the file CID
-      // wait for MCP API to update return values
-      /*
+      // currently MCP API does not show txHash
+      console.log('Generating metadata...')
       const metadata = generateMetadata(
-        taskArgs.name || `${taskArgs.file.split('.').pop()}.json`,
-        taskArgs.description,
+        taskArgs.name || `${taskArgs.file.split('.')[0]}.json`,
+        taskArgs.desc,
         upload.cid,
-        upload.txHash,
+        //upload.txHash,
       )
-      */
 
-      // const metadataUpload = await mcpUpload(metadata) // upload JSON to MCP
-      // await mint(metadataUpload.cid) // mint NFT!
+      // Display JSON file
+      console.log(JSON.stringify(metadata))
+
+      // upload JSON to MCP
+      console.log('Uploading metadata to MCP...')
+      const metadataUpload = await mcpUpload(
+        metadata.name,
+        JSON.stringify(metadata),
+      )
+
+      await mint(metadataUpload.cid) // mint NFT!
     }
   })
 
@@ -36,6 +45,8 @@ const mcpUpload = async (fileName, file, duration = 180) => {
   const form = new FormData()
   form.append('duration', duration)
   form.append('file', file, fileName)
+
+  let result = { cid: '' }
 
   await axios
     .post(network.config.mcp.uploadUrl, form, {
@@ -47,22 +58,29 @@ const mcpUpload = async (fileName, file, duration = 180) => {
     .then(
       (response) => {
         console.log(response.data)
+        const cid = response.data.data.ipfs_url.split('/').pop()
+        result.cid = cid
       },
       (error) => {
         console.log(error)
       },
     )
 
+  return result
   // return fileCid, pinStatus, deal_id, deal_cid, status, txHash
 }
 
-const generateMetadata = (name, description, cid, hash) => {
-  return JSON.stringify({
+const generateMetadata = (
+  name,
+  description,
+  cid, //hash
+) => {
+  return {
     name: name, // directory name
     description: description,
     data: `${process.env.READ_GATEWAY}${cid}`,
-    paymentHash: hash,
-  })
+    //paymentHash: hash,
+  }
 }
 
 const mint = async (metadataCid) => {
