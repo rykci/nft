@@ -22,12 +22,12 @@ contract DatabaseMinter is ERC721URIStorage, Ownable {
         return baseURI;
     }
 
-    //get the current supply of tokens
+    // get the current supply of tokens
     function totalSupply() public view returns (uint256) {
         return _tokenIds.current();
     }
 
-    
+    // mint token
     function mintData(address minter, string memory tokenURI)
         public
         onlyOwner
@@ -43,13 +43,4 @@ contract DatabaseMinter is ERC721URIStorage, Ownable {
     function setBaseURI(string memory _newBaseURI) public onlyOwner {
         baseURI = _newBaseURI;
     }
-
-
-    // This will payout the owner the contract balance.
-    // Do not remove this otherwise you will not be able to withdraw the funds.
-    // =============================================================================
-  /*function withdraw() public payable onlyOwner {
-      (bool os, ) = payable(owner()).call{value: address(this).balance}("");
-    require(os);
-  }*/
 }
