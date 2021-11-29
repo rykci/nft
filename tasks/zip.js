@@ -10,9 +10,5 @@ task('zip', 'creates a zip file for a directory')
     )
 
     // logs the upload command that the user can copy and paste to upload the car file to IPFS
-    console.log(
-      `npx hardhat upload --car ${taskArgs.dir}/../${taskArgs.dir
-        .split('/')
-        .pop()}.zip`,
-    )
+    console.log(`.zip file made: ${taskArgs.dir.split('/').pop()}.zip`)
   })

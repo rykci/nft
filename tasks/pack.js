@@ -14,9 +14,5 @@ task('pack', 'converts file or directory to .car file')
     })
 
     // logs the upload command that the user can copy and paste to upload the car file to IPFS
-    console.log(
-      `npx hardhat upload --car ${taskArgs.dir}/../${taskArgs.dir
-        .split('/')
-        .pop()}.car`,
-    )
+    console.log(`.car file made: ${taskArgs.dir.split('/').pop()}.car`)
   })
