@@ -24,31 +24,35 @@ task('upload', 'Upload directory to IPFS')
     }
 
     // upload to IPFS and return object with size and CID
-    const uploadResult = await ipfs.add(file, { wrapWithDirectory: true })
-    console.log(uploadResult)
+    try {
+      // NFT metadata relies on this uploadResult, so it is all inside try block
+      const uploadResult = await ipfs.add(file, { wrapWithDirectory: true })
+      console.log(uploadResult)
 
-    // the name of the .car file without the .car extension
-    const metadataName = fileName.split('.')[0]
+      // the name of the .car file without the .car extension
+      const metadataName = fileName.split('.')[0]
 
-    // metadata file object for IPFS api
-    const fileMetadata = {
-      path: `${metadataName}.json`, // add JSON extension
-      content: JSON.stringify({
-        name: taskArgs.name || metadataName, // directory name
-        description: taskArgs.desc,
-        //image: `${process.env.READ_GATEWAY}QmQbF9mJEYUdLaWgw568abFiwvR1udQsfmuLyhejTiZ2DG`, // placeholder database icon for opensea
-        data: `${process.env.READ_GATEWAY}${uploadResult.cid}`, // gateway to files of directory on IPFS
-        attributes: [
-          // display the size on OpenSea
-          {
-            display_type: 'number',
-            trait_type: 'Size',
-            value: uploadResult.size,
-          },
-        ],
-      }),
+      // metadata file object for IPFS api
+      const fileMetadata = {
+        path: `${metadataName}.json`, // add JSON extension
+        content: JSON.stringify({
+          name: taskArgs.name || metadataName, // directory name
+          description: taskArgs.desc,
+          data: `${process.env.READ_GATEWAY}${uploadResult.cid}`, // gateway to files of directory on IPFS
+          attributes: [
+            // display the size on OpenSea
+            {
+              display_type: 'number',
+              trait_type: 'Size',
+              value: uploadResult.size,
+            },
+          ],
+        }),
+      }
+
+      // upload to IPFS and return object with size and CID
+      console.log(await ipfs.add(fileMetadata))
+    } catch (err) {
+      console.error(err)
     }
-
-    // upload to IPFS and return object with size and CID
-    console.log(await ipfs.add(fileMetadata))
   })
