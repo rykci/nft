@@ -3,6 +3,8 @@ const axios = require('axios')
 const fs = require('fs').promises
 const FormData = require('form-data')
 require('dotenv').config()
+const { mint } = require('./helper/mint')
+const { generateMetadata } = require('./helper/generateMetadata')
 
 task('mcp', 'Upload file to MCP and mint NFT')
   .addParam('file', '')
@@ -13,18 +15,22 @@ task('mcp', 'Upload file to MCP and mint NFT')
       console.log('Please Login for Auth Token')
     } else {
       const file = await fs.readFile(taskArgs.file) // read file
+      const fileName = taskArgs.file.split('/').pop()
 
       console.log('Uploading file to MCP...')
-      const upload = await mcpUpload(taskArgs.file.split('/').pop(), file) // upload file to MCP
+      const uploadResponse = await mcpUpload(fileName, file) // upload file to MCP
+      console.log(uploadResponse)
+
+      // extract the cid from the response
+      const uploadCid = uploadResponse.data.ipfs_url.split('/').pop()
 
       // generate metadata using the file CID
       // currently MCP API does not show txHash
       console.log('Generating metadata...')
       const metadata = generateMetadata(
-        taskArgs.name || `${taskArgs.file.split('.')[0]}.json`,
+        taskArgs.name || `${taskArgs.file.split('.')[0]}`,
         taskArgs.desc,
-        upload.cid,
-        //upload.txHash,
+        uploadCid,
       )
 
       // Display JSON file
@@ -32,12 +38,17 @@ task('mcp', 'Upload file to MCP and mint NFT')
 
       // upload JSON to MCP
       console.log('Uploading metadata to MCP...')
-      const metadataUpload = await mcpUpload(
-        metadata.name,
+      const metadataUploadResponse = await mcpUpload(
+        `${metadata.name}.json`,
         JSON.stringify(metadata),
       )
+      console.log(metadataUploadResponse)
 
-      await mint(metadataUpload.cid) // mint NFT!
+      // extract the cid from the response
+      const nftCid = metadataUploadResponse.data.ipfs_url.split('/').pop()
+
+      // mint NFT!
+      await mint(nftCid)
     }
   })
 
@@ -46,58 +57,16 @@ const mcpUpload = async (fileName, file, duration = 180) => {
   form.append('duration', duration)
   form.append('file', file, fileName)
 
-  let result = { cid: '' }
-
-  await axios
-    .post(network.config.mcp.uploadUrl, form, {
+  try {
+    const response = await axios.post(network.config.mcp.uploadUrl, form, {
       headers: {
         ...form.getHeaders(),
         Authorization: `Bearer ${network.config.mcp.authToken}`,
       },
     })
-    .then(
-      (response) => {
-        console.log(response.data)
-        const cid = response.data.data.ipfs_url.split('/').pop()
-        result.cid = cid
-      },
-      (error) => {
-        console.log(error)
-      },
-    )
-
-  return result
-  // return fileCid, pinStatus, deal_id, deal_cid, status, txHash
-}
-
-const generateMetadata = (
-  name,
-  description,
-  cid, //hash
-) => {
-  return {
-    name: name, // directory name
-    description: description,
-    data: `${process.env.READ_GATEWAY}${cid}`,
-    //paymentHash: hash,
+    return response.data
+  } catch (err) {
+    // Handle Error Here
+    console.error(err)
   }
-}
-
-const mint = async (metadataCid) => {
-  const contractAddr = network.config.contract
-  const networkId = network.name
-  console.log('Contract address: ', contractAddr, ' on network ', networkId)
-
-  const MinterContract = await ethers.getContractFactory('DatabaseMinter')
-
-  //Get signer information
-  const [signer] = await ethers.getSigners()
-
-  //Mint NFT
-  console.log('Minting...')
-  const databaseMinter = await MinterContract.attach(contractAddr)
-  const tx = await databaseMinter.mintData(signer.address, metadataCid)
-  await tx.wait()
-  const tokenId = await databaseMinter.totalSupply()
-  console.log(`NFT ${tokenId} minted. Transaction Hash: ${tx.hash}`)
 }
