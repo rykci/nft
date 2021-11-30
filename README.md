@@ -54,11 +54,11 @@ If you wish to upload multiple files, the files should be in one directory then 
 
 #### Pack directory into .car
 
-Use `npx hardhat pack --dir <PATH>` to pack a directory into a .car file of the same name.
+Use `npx hardhat pack --dir <PATH>` to pack a directory into a .car file of the same name. Optionally, add `--out <PATH>` to specify the path for the output file (defaults to same location as input file).
 
 #### Pack directory into .zip
 
-Use `npx hardhat zip --dir <PATH>` to pack a directory into a .zip file of the same name.
+Use `npx hardhat zip --dir <PATH>` to pack a directory into a .zip file of the same name. Optionally, add `--out <PATH>` to specify the path for the output file (defaults to same location as input file).
 
 This method will upload your file(s) to IPFS using read gateway such as https://ipfs.io/ipfs/
 
