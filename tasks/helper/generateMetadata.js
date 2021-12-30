@@ -1,9 +1,9 @@
-const generateMetadata = (name, description, cid, attributes = undefined) => {
+const generateMetadata = (cid, name, description, txHash) => {
   return {
     name: name, // directory name
     description: description,
-    data: `${process.env.READ_GATEWAY}${cid}`,
-    attributes: attributes,
+    image: `${process.env.READ_GATEWAY}${cid}`,
+    attributes: [{ value: txHash }],
   }
 }
 
