@@ -1,4 +1,4 @@
-const lockTokenPayment = async (cid, payer) => {
+const lockTokenPayment = async (cid, payer, amount) => {
   const erc20ABI = require('../../abi/ERC20.json')
   const swanPaymentABI = require('../../abi/SwanPayment.json')
 
@@ -26,8 +26,8 @@ const lockTokenPayment = async (cid, payer) => {
   const tx = await paymentInstance.connect(payer).lockTokenPayment(
     {
       id: cid,
-      minPayment: one,
-      amount: ten,
+      minPayment: amount,
+      amount: (parseInt(amount) * 1.5).toString(),
       lockTime: 86400 * 6, // 6 days
       recipient: recipientAddress, //todo:
     },
