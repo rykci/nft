@@ -32,7 +32,7 @@ Set up and customize configuration by making modifications on .env file, which s
 
 # Deploy Contract
 
-Deploy the `DatabaseMinter` contract using `npx hardhat deploy.js` and **store the contract address** in the `hardhat.config.js` with key `contract` under the correct network.
+Deploy the `DatabaseMinter` contract using `npx hardhat deploy` and **store the contract address** in the `hardhat.config.js` with key `contract` under the correct network.
 
 Optional parameters to name your NFT collection. Each deployed contract is a seperate collection.
 
