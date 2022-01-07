@@ -1,4 +1,6 @@
 const { task } = require('hardhat/config')
+const { mcpUpload } = require('./helper/mcpUpload')
+const { ipfsUpload } = require('./helper/ipfsUpload')
 
 const axios = require('axios')
 const fs = require('fs').promises
@@ -20,5 +22,8 @@ task('upload', 'Upload directory to IPFS using MCP API')
       signer.address,
       duration,
     ) // upload file to MCP
+
+    const ipfsUploadResponse = await ipfsUpload(_file)
     console.log(uploadResponse)
+    console.log(ipfsUploadResponse)
   })

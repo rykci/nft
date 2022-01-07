@@ -7,6 +7,8 @@ require('./tasks/tokenURI')
 require('./tasks/pack')
 require('./tasks/zip')
 require('./tasks/deploy')
+require('./tasks/paymentInfo')
+require('./tasks/price')
 require('./tasks/lockTokens')
 require('./tasks/metadata')
 require('./tasks/uploadLockMint')
@@ -29,6 +31,7 @@ module.exports = {
         fs3Recipient: process.env.RECIPIENT_ADDRESS,
         uploadUrl: process.env.MCP_UPLOAD_URL,
         filecoinUrl: process.env.MCP_FILECOIN_PRICE_URL,
+        paymentInfoUrl: process.env.MCP_PAYMENT_INFO_URL,
       },
       usdcAddress: process.env.USDC_ADDRESS,
       swanPaymentAddress: process.env.SWAN_PAYMENT_ADDRESS,

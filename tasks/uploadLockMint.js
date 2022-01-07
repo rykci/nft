@@ -2,6 +2,7 @@ const { task } = require('hardhat/config')
 const fs = require('fs').promises
 const { ipfsUpload } = require('./helper/ipfsUpload')
 const { mcpUpload } = require('./helper/mcpUpload')
+const { paymentInfo } = require('./helper/paymentInfo')
 const {
   getAverageUsdcStoragePrice,
 } = require('./helper/getAverageUsdcStoragePrice')
@@ -27,28 +28,48 @@ task('uploadLockMint', 'single task, to upload file, lock tokens, and mint nft')
     // cid from both upload should be the same
     //const cid = uploadResponse.data.ipfs_url.split('/').pop()
     const cid = String(ipfsUploadResponse.cid)
+    const payload_cid = uploadResponse.data.payload_cid
 
-    // get the amount of funds to lock
-    const usdcPricePerByte = await getAverageUsdcStoragePrice()
-    const lockAmount = (usdcPricePerByte * ipfsUploadResponse.size).toString()
+    console.log(uploadResponse)
+    console.log(ipfsUploadResponse)
 
-    // lock token payment
-    console.log('Locking tokens for payment...')
-    const txHash = await lockTokenPayment(cid, signer, lockAmount)
-    //const txHash = ''
+    // check if payment is needed
+    let txHash = ''
+    if (uploadResponse.data?.need_pay % 2 == 0) {
+      // get the amount of funds to lock
+      console.log('Getting price estimate...')
+      const usdcPricePerByte = await getAverageUsdcStoragePrice()
+      const lockAmount = (usdcPricePerByte * ipfsUploadResponse.size).toString()
+
+      console.log(lockAmount)
+
+      // lock token payment
+      console.log('Locking tokens for payment...')
+      txHash = await lockTokenPayment(payload_cid, signer, lockAmount)
+      //const txHash = ''
+    } else {
+      //payment already made, find tx_hash
+      console.log('Payment already completed, getting tx_hash...')
+      const paymentStatus = await paymentInfo(payload_cid)
+      txHash = paymentStatus.tx_hash
+    }
+
+    console.log(txHash)
 
     //generateMetadata(cid, name, desc)
     console.log('Generating JSON metadata...')
     const metadata = generateMetadata(
       cid,
-      name,
+      name || fileName,
       desc,
       txHash,
       ipfsUploadResponse.size,
     )
 
+    console.log(metadata)
+
     // upload JSON to MCP
-    console.log('Uploading metadata to MCP...')
+    console.log('Uploading metadata to IPFS...')
     /* unsure if i should upload metadata to mcp because we would have to lock payment again
     const metadataUploadResponse = await mcpUpload(
       `${metadata.name}.json`,
@@ -59,6 +80,8 @@ task('uploadLockMint', 'single task, to upload file, lock tokens, and mint nft')
     const ipfsMetadataUploadResponse = await ipfsUpload(
       JSON.stringify(metadata),
     )
+
+    console.log(ipfsMetadataUploadResponse)
 
     // extract the cid from the response
     //const nftCid = metadataUploadResponse.data.ipfs_url.split('/').pop()
