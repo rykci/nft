@@ -1,58 +1,29 @@
 const { task } = require('hardhat/config')
-const { create } = require('ipfs-http-client')
+const { mcpUpload } = require('./helper/mcpUpload')
+const { ipfsUpload } = require('./helper/ipfsUpload')
+
+const axios = require('axios')
 const fs = require('fs').promises
+const FormData = require('form-data')
 
-require('dotenv').config()
-
-task('upload', 'Upload directory to IPFS')
+task('upload', 'Upload directory to IPFS using MCP API')
   .addParam('file', 'The path of the file you wish to upload to IPFS')
-  .addOptionalParam('name', 'name of the NFT')
-  .addOptionalParam('desc', 'NFT description')
-  .setAction(async (taskArgs) => {
-    // create an instance of the HTTP API client
-    const ipfs = create(process.env.WRITE_GATEWAY)
+  .addOptionalParam('duration', 'duration (defaults to 180)')
+  .setAction(async ({ file, duration }) => {
+    // get signer
+    const signer = await ethers.getSigner()
+    const _file = await fs.readFile(file) // read file
+    const fileName = file.split('/').pop()
 
-    let path = taskArgs.file
+    console.log('Uploading file to MCP...')
+    const uploadResponse = await mcpUpload(
+      fileName,
+      _file,
+      signer.address,
+      duration,
+    ) // upload file to MCP
 
-    // fileName is the name of the .car file
-    const fileName = path.split('/').pop()
-
-    // file object for IPFS api
-    const file = {
-      path: fileName, //get path name
-      content: await fs.readFile(path), //.car file
-    }
-
-    // upload to IPFS and return object with size and CID
-    try {
-      // NFT metadata relies on this uploadResult, so it is all inside try block
-      const uploadResult = await ipfs.add(file, { wrapWithDirectory: true })
-      console.log(uploadResult)
-
-      // the name of the .car file without the .car extension
-      const metadataName = fileName.split('.')[0]
-
-      // metadata file object for IPFS api
-      const fileMetadata = {
-        path: `${metadataName}.json`, // add JSON extension
-        content: JSON.stringify({
-          name: taskArgs.name || metadataName, // directory name
-          description: taskArgs.desc,
-          data: `${process.env.READ_GATEWAY}${uploadResult.cid}`, // gateway to files of directory on IPFS
-          attributes: [
-            // display the size on OpenSea
-            {
-              display_type: 'number',
-              trait_type: 'Size',
-              value: uploadResult.size,
-            },
-          ],
-        }),
-      }
-
-      // upload to IPFS and return object with size and CID
-      console.log(await ipfs.add(fileMetadata))
-    } catch (err) {
-      console.error(err)
-    }
+    const ipfsUploadResponse = await ipfsUpload(_file)
+    console.log(uploadResponse)
+    console.log(ipfsUploadResponse)
   })

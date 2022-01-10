@@ -5,5 +5,5 @@ require('dotenv').config()
 task('mint', 'mint NFT supplying contract and tokenURI')
   .addParam('cid', 'IPFS cid of the NFT metadata')
   .setAction(async (taskArgs) => {
-    await mint(taskArgs.cid)
+    await mint(taskArgs.cid, await ethers.getSigner())
   })

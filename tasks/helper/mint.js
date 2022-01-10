@@ -1,10 +1,7 @@
-const mint = async (metadataCid) => {
+const mint = async (metadataCid, signer) => {
   // get contract information
   const contractAddr = network.config.contract
   const networkName = network.name
-
-  // get signer information
-  const [signer] = await ethers.getSigners()
 
   try {
     // Attach contract
