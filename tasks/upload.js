@@ -25,5 +25,5 @@ task('upload', 'Upload directory to IPFS using MCP API')
 
     const ipfsUploadResponse = await ipfsUpload(_file)
     console.log(uploadResponse)
-    console.log(ipfsUploadResponse)
+    //console.log(ipfsUploadResponse)
   })

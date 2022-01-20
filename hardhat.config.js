@@ -1,4 +1,5 @@
 require('@nomiclabs/hardhat-waffle')
+require('@openzeppelin/hardhat-upgrades')
 require('dotenv').config()
 
 require('./tasks/upload')
@@ -26,7 +27,7 @@ module.exports = {
     mumbai: {
       url: process.env.MUMBAI_URL,
       accounts: [process.env.PRIVATE_KEY],
-      contract: '',
+      contract: '0x1A1e5AC88C493e0608C84c60b7bb5f04D9cF50B3',
       mcp: {
         fs3Recipient: process.env.RECIPIENT_ADDRESS,
         uploadUrl: process.env.MCP_UPLOAD_URL,

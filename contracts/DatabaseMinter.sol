@@ -30,7 +30,6 @@ contract DatabaseMinter is ERC721URIStorage, Ownable {
     // mint token
     function mintData(address minter, string memory tokenURI)
         public
-        onlyOwner
         returns (uint256)
     {
         _tokenIds.increment();
@@ -42,5 +41,9 @@ contract DatabaseMinter is ERC721URIStorage, Ownable {
 
     function setBaseURI(string memory _newBaseURI) public onlyOwner {
         baseURI = _newBaseURI;
+    }
+    
+    function contractURI() public pure returns (string memory) {
+        return "https://calibration-ipfs.filswan.com/ipfs/QmaCZFE51FfGR8YhWduu9TNbgB9tpyVyAUQgY3Dpts6Hfn";
     }
 }
