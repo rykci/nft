@@ -31,7 +31,7 @@ task('uploadLockMint', 'single task, to upload file, lock tokens, and mint nft')
     const payload_cid = uploadResponse.data.payload_cid
 
     console.log(uploadResponse)
-    console.log(ipfsUploadResponse)
+    //console.log(ipfsUploadResponse)
 
     // check if payment is needed
     let txHash = ''
@@ -44,9 +44,15 @@ task('uploadLockMint', 'single task, to upload file, lock tokens, and mint nft')
       console.log(lockAmount)
 
       // lock token payment
-      console.log('Locking tokens for payment...')
-      txHash = await lockTokenPayment(payload_cid, signer, lockAmount)
-      //const txHash = ''
+      try {
+        console.log('Locking tokens for payment...')
+        txHash = await lockTokenPayment(payload_cid, signer, lockAmount)
+        //const txHash = ''
+      } catch (err) {
+        console.log('payment transaction failed')
+        console.log(err)
+        return txHash
+      }
     } else {
       //payment already made, find tx_hash
       console.log('Payment already completed, getting tx_hash...')
@@ -70,13 +76,13 @@ task('uploadLockMint', 'single task, to upload file, lock tokens, and mint nft')
 
     // upload JSON to MCP
     console.log('Uploading metadata to IPFS...')
-    /* unsure if i should upload metadata to mcp because we would have to lock payment again
     const metadataUploadResponse = await mcpUpload(
       `${metadata.name}.json`,
       JSON.stringify(metadata),
       signer.address,
-    )*/
-    //console.log(metadataUploadResponse)
+      (file_type = 1),
+    )
+    console.log(metadataUploadResponse)
     const ipfsMetadataUploadResponse = await ipfsUpload(
       JSON.stringify(metadata),
     )

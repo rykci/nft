@@ -28,7 +28,7 @@ const lockTokenPayment = async (cid, payer, amount) => {
       id: cid,
       minPayment: amount,
       amount: (parseInt(amount) * 1.5).toString(),
-      lockTime: 86400 * 6, // 6 days
+      lockTime: 180 * 1, // 6 days
       recipient: recipientAddress, //todo:
     },
     overrides,
