@@ -2,6 +2,7 @@ require('@nomiclabs/hardhat-waffle')
 require('dotenv').config()
 
 require('./tasks/tokenURI')
+require('./tasks/uploadLockMint')
 
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
