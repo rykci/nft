@@ -13,7 +13,6 @@ require('./tasks/uploadLockMint')
  */
 module.exports = {
   solidity: '0.8.4',
-  defaultNetwork: 'mumbai',
   networks: {
     mumbai: {
       url: process.env.MUMBAI_URL,
