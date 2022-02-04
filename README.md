@@ -71,5 +71,4 @@ You can search for your collection (your deployed contract) using the contract a
 https://testnets.opensea.io/get-listed
 
 Select the correct network and paste the contract address. Your collection will be opened on a new tab. \
-NFT metadata will take some time to load, Opensea will call the tokenURI function in the contract to refresh \
-the metadata.
+NFT metadata will take some time to load, Opensea will call the tokenURI function in the contract to refresh the metadata.
