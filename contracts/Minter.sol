@@ -13,16 +13,21 @@ contract Minter is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeable
 
     CountersUpgradeable.Counter private _tokenIdCounter;
 
+    string private _name;
+    string private _symbol;
     string public baseURI;
     string public contractURI;
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     //constructor() initializer {}
 
-    function initialize(string memory _name, string memory _symbol) initializer public {
-        __ERC721_init(_name, _symbol);
+    function initialize(string memory name_, string memory symbol_) initializer public {
+        __ERC721_init(name_, symbol_);
         __ERC721URIStorage_init();
         __Ownable_init();
+
+        setName(name_);
+        setSymbol(symbol_);
     }
 
     function mintData(address minter, string memory uri)
@@ -70,5 +75,22 @@ contract Minter is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeable
     // get the current supply of tokens
     function totalSupply() public view returns (uint256) {
         return _tokenIdCounter.current();
+    }
+
+    // getter and setter for name and symbol
+    function name() public view override(ERC721Upgradeable) returns (string memory) {
+        return _name;
+    }
+
+    function symbol() public view override(ERC721Upgradeable) returns (string memory) {
+        return _symbol;
+    }
+
+    function setName(string memory name_) public onlyOwner {
+        _name = name_;
+    }
+
+    function setSymbol(string memory symbol_) public onlyOwner {
+        _symbol = symbol_;
     }
 }
