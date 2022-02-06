@@ -8,6 +8,9 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "./MinterBeacon.sol";
 import "./Minter.sol";
 
+//////////////////////////////////////////////
+// This contract is only used for testing!! //
+//////////////////////////////////////////////
 interface IMinter {
     function mintData(address minter, string memory uri) external returns (uint256);
     function totalSupply() external view returns (uint256);
@@ -18,7 +21,7 @@ interface IMinter {
     function setSymbol(string memory symbol_) external;
 }
 
-contract MinterFactory is OwnableUpgradeable{
+contract MinterFactoryV2 is OwnableUpgradeable{
     MinterBeacon private beacon;
 
     mapping(address => address) private minterAddressToUser;
@@ -35,11 +38,10 @@ contract MinterFactory is OwnableUpgradeable{
 
     // creates Minter Beacon Proxy, sets msg.sender to be admin, factory will be admin
     function createMinter(string calldata name, string calldata symbol) public returns (address){
-        BeaconProxy minter = new BeaconProxy(address(beacon), abi.encodeWithSelector(Minter(address(0)).initialize.selector, address(this), name, symbol));
+        BeaconProxy minter = new BeaconProxy(address(beacon), abi.encodeWithSelector(Minter(address(0)).initialize.selector, name, symbol));
         userToMinterAddresses[msg.sender].push(address(minter));
         minterAddressToUser[address(minter)] = (msg.sender);
 
-        Minter(address(minter)).setAdmin(msg.sender);
         Minter(address(minter)).transferOwnership(msg.sender);
 
         return address(minter); 
@@ -86,5 +88,9 @@ contract MinterFactory is OwnableUpgradeable{
     }
     function setSymbol( address minter, string memory symbol_) public isAuthorized(minter){
         IMinter(minter).setSymbol(symbol_);
+    }
+
+    function newFeature() public pure returns (string memory){
+        return 'this implementation has the new feature!';
     }
 }

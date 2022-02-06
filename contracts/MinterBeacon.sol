@@ -10,7 +10,6 @@ contract MinterBeacon is Ownable {
 
     constructor(address _implementation) {
         beacon = new UpgradeableBeacon(_implementation);
-        transferOwnership(tx.origin);
     }
 
     function update(address newImplementation) public onlyOwner {

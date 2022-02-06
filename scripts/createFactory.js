@@ -2,20 +2,17 @@ const { ethers, upgrades } = require('hardhat')
 
 async function main() {
   // We get the contract to deploy
-  const admin = await ethers.getSigner()
-
   const Minter = await ethers.getContractFactory('Minter')
-  const minter = await upgrades.deployProxy(Minter, [
-    admin.address,
-    'Test Token',
-    'TTKN',
+  const MinterFactory = await ethers.getContractFactory('MinterFactory')
+  const factory = await upgrades.deployProxy(MinterFactory, [
+    (await Minter.deploy()).address,
   ])
 
-  await minter.deployed()
+  await factory.deployed()
 
   console.log(
     'Minter deployed to:',
-    minter.address,
+    factory.address,
     'on network:',
     network.name,
   )
