@@ -2,6 +2,14 @@
 
 **Technology Stack**: Javascript, Node.js, Solidity, Hardhat
 
+## Contracts
+
+This project was coded with the [Hardhat SDK](https://hardhat.org/) and [Openzeppelin contracts](https://github.com/OpenZeppelin/openzeppelin-contracts/).
+
+- `Minter`: OwnableUpgradeable ERC721 contract to mint NFTs
+- `MinterBeacon`: Beacon contract which stores the implementation logic for the BeaconProxies
+- `MinterFactory`: Factory contract that creates BeaconProxy contracts using MinterBeacon implementation.
+
 ## Prerequisites
 
 This project was coded using Node version 16.3.0. \
