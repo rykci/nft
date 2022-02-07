@@ -2,6 +2,14 @@
 
 **Technology Stack**: Javascript, Node.js, Solidity, Hardhat
 
+## Contracts
+
+This project was coded with the [Hardhat SDK](https://hardhat.org/) and [Openzeppelin contracts](https://github.com/OpenZeppelin/openzeppelin-contracts/).
+
+- `Minter`: OwnableUpgradeable ERC721 contract to mint NFTs
+- `MinterBeacon`: Beacon contract which stores the implementation logic for the BeaconProxies
+- `MinterFactory`: Factory contract that creates BeaconProxy contracts using MinterBeacon implementation.
+
 ## Prerequisites
 
 This project was coded using Node version 16.3.0. \
@@ -35,6 +43,40 @@ Deploy the Minter contract using `npx hardhat run scripts/createMinter.js`. \
 Since `Minter.sol` is an upgradeable smart contract, this script will deploy a proxy. \
 You can also add `--network <NETWORK_NAME>` to specify which network to deploy to.
 
+Store the contract address in the `hardhat.config.js` with key `contract` under the correct network.
+
 ## Run Tests
 
 Some tests are written under the `./test/` folder. These can be run using `npx hardhat test`
+
+## Mint From Terminal
+
+Use command npx hardhat `uploadLockMint --file <PATH>`. This script uses helper functions to:
+
+- upload the file to MCP
+- generate metadata JSON
+- upload metadata to MCP
+- mint NFT
+
+Optional params include `--name <NFT_NAME> and --desc <NFT_DESCRIPTION>` The metadata will look like:
+
+```
+{
+    name: <NFT_NAME> // defaults to the name of file,
+    description: <NFT_DESCRIPTION>,
+    image: <READ_GATEWAY> + <IPFS_CID>,
+}
+```
+
+## Token URI
+
+Use command `npx hardhat tokenURI --id <tokenID>` to retrieve the tokenURI of a minted NFT.
+
+## View Your NFT!
+
+After minting, the NFT should be available to view on OpenSea (testnet). \
+You can search for your collection (your deployed contract) using the contract address here: \
+https://testnets.opensea.io/get-listed
+
+Select the correct network and paste the contract address. Your collection will be opened on a new tab. \
+NFT metadata will take some time to load, Opensea will call the tokenURI function in the contract to refresh the metadata.

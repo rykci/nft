@@ -7,35 +7,59 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
 
-//////////////////////////////////////////////////////////////
-// This contract upgrade is only used for testing purposes! //
-//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////
+// This contract is only used for testing!! //
+//////////////////////////////////////////////
 contract MinterV2 is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeable, OwnableUpgradeable {
     using CountersUpgradeable for CountersUpgradeable.Counter;
 
     CountersUpgradeable.Counter private _tokenIdCounter;
 
+    string private _name;
+    string private _symbol;
     string public baseURI;
     string public contractURI;
+
+    mapping (address => bool) isAdmin;
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     //constructor() initializer {}
 
-    function initialize(string memory _name, string memory _symbol) initializer public {
-        __ERC721_init(_name, _symbol);
+    function initialize(address _admin, string memory name_, string memory symbol_) initializer public {
+        require(_admin != address(0));
+        isAdmin[_admin] = true;
+
+        __ERC721_init(name_, symbol_);
         __ERC721URIStorage_init();
         __Ownable_init();
+
+        setName(name_);
+        setSymbol(symbol_);
+
+    }
+
+    modifier onlyAdmin {
+        require(isAdmin[msg.sender], "this sender is not an admin");
+        _;
+    }
+
+    function setAdmin(address _address) public onlyOwner {
+        isAdmin[_address] = true;
+    }
+
+    function removeAdmin(address _address) public onlyOwner {
+        isAdmin[_address] = false;
     }
 
     function mintData(address minter, string memory uri)
         public
-        onlyOwner
+        onlyAdmin
         returns (uint256)
     {
         _tokenIdCounter.increment();
         uint256 tokenId = _tokenIdCounter.current();
         _safeMint(minter, tokenId);
-        _setTokenURI(tokenId, string(abi.encodePacked('<URI PREFIX>:', uri)));
+        _setTokenURI(tokenId, uri);
 
         return tokenId;
     }
@@ -60,17 +84,38 @@ contract MinterV2 is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeab
 
     // setter functions
 
-    function setBaseURI(string memory _newBaseURI) public onlyOwner {
+    function setBaseURI(string memory _newBaseURI) public onlyAdmin {
         baseURI = _newBaseURI;
     }
 
 
-    function setContractURI(string memory _newContractURI) public onlyOwner {
+    function setContractURI(string memory _newContractURI) public onlyAdmin {
         contractURI = _newContractURI;
     }
 
     // get the current supply of tokens
     function totalSupply() public view returns (uint256) {
         return _tokenIdCounter.current();
+    }
+
+    // getter and setter for name and symbol
+    function name() public view override(ERC721Upgradeable) returns (string memory) {
+        return _name;
+    }
+
+    function symbol() public view override(ERC721Upgradeable) returns (string memory) {
+        return _symbol;
+    }
+
+    function setName(string memory name_) public onlyAdmin {
+        _name = name_;
+    }
+
+    function setSymbol(string memory symbol_) public onlyAdmin {
+        _symbol = symbol_;
+    }
+
+    function newFeature() public pure returns (string memory) {
+        return 'this implementation has the new feature!';
     }
 }
