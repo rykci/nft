@@ -1,17 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.2;
 
-import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721URIStorageUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
 
 /// @custom:security-contact ryuen@nbai.io
-contract Minter is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeable, OwnableUpgradeable {
-    using CountersUpgradeable for CountersUpgradeable.Counter;
+contract Minter is ERC721, ERC721URIStorage, Ownable {
+    using Counters for Counters.Counter;
 
-    CountersUpgradeable.Counter private _tokenIdCounter;
+    Counters.Counter private _tokenIdCounter;
 
     string private _name;
     string private _symbol;
@@ -23,17 +22,12 @@ contract Minter is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeable
     /// @custom:oz-upgrades-unsafe-allow constructor
     //constructor() initializer {}
 
-    function initialize(address _admin, string memory name_, string memory symbol_) initializer public {
+    constructor (address _admin, string memory name_, string memory symbol_)  ERC721(name_, symbol_) {
         require(_admin != address(0));
         isAdmin[_admin] = true;
 
-        __ERC721_init(name_, symbol_);
-        __ERC721URIStorage_init();
-        __Ownable_init();
-
-        setName(name_);
-        setSymbol(symbol_);
-
+        _name = name_;
+        _symbol = symbol_;
     }
 
     modifier onlyAdmin {
@@ -66,7 +60,7 @@ contract Minter is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeable
 
     function _burn(uint256 tokenId)
         internal
-        override(ERC721Upgradeable, ERC721URIStorageUpgradeable)
+        override(ERC721, ERC721URIStorage)
     {
         super._burn(tokenId);
     }
@@ -74,7 +68,7 @@ contract Minter is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeable
     function tokenURI(uint256 tokenId)
         public
         view
-        override(ERC721Upgradeable, ERC721URIStorageUpgradeable)
+        override(ERC721, ERC721URIStorage)
         returns (string memory)
     {
         return super.tokenURI(tokenId);
@@ -97,11 +91,11 @@ contract Minter is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeable
     }
 
     // getter and setter for name and symbol
-    function name() public view override(ERC721Upgradeable) returns (string memory) {
+    function name() public view override(ERC721) returns (string memory) {
         return _name;
     }
 
-    function symbol() public view override(ERC721Upgradeable) returns (string memory) {
+    function symbol() public view override(ERC721) returns (string memory) {
         return _symbol;
     }
 

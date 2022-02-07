@@ -13,11 +13,7 @@ before(async () => {
   ;[owner, addr1, addr2, ...addrs] = await ethers.getSigners()
 
   Minter = await ethers.getContractFactory('Minter')
-  minter = await upgrades.deployProxy(Minter, [
-    owner.address,
-    'Test Token',
-    'TTKN',
-  ])
+  minter = await Minter.deploy(owner.address, 'Test Token', 'TTKN')
 
   await minter.deployed()
 })
@@ -50,14 +46,5 @@ describe('Minter', function () {
     await expect(
       minter.connect(addr1).mintData(owner.address, tokenURI),
     ).to.be.revertedWith('this sender is not an admin')
-  })
-
-  it('Should be upgradeable', async () => {
-    const MinterV2 = await ethers.getContractFactory('MinterV2')
-    minter = await upgrades.upgradeProxy(minter.address, MinterV2)
-
-    expect(await minter.newFeature()).to.equal(
-      'this implementation has the new feature!',
-    )
   })
 })
