@@ -80,7 +80,6 @@ contract Minter is ERC721, ERC721URIStorage, Ownable {
         baseURI = _newBaseURI;
     }
 
-
     function setContractURI(string memory _newContractURI) public onlyAdmin {
         contractURI = _newContractURI;
     }

@@ -13,10 +13,9 @@ contract MinterFactory is OwnableUpgradeable{
         __Ownable_init();
     }
 
-    // creates Minter Beacon Proxy, sets msg.sender to be admin, factory will be admin
     function createMinter(string calldata name, string calldata symbol) public returns (address){
-        Minter minter = new Minter(msg.sender, name, symbol);
-        // Minter(address(minter)).setAdmin(address(this)); // set factory as admin
+        Minter minter = new Minter(msg.sender, name, symbol); // new Minter instance
+        Minter(address(minter)).setAdmin(address(this)); // set factory as admin
         Minter(address(minter)).transferOwnership(msg.sender); // set msg.sender as owner
 
         userToMinterAddresses[msg.sender].push(address(minter));
@@ -31,4 +30,19 @@ contract MinterFactory is OwnableUpgradeable{
         return userToMinterAddresses[user];
     }
 
+    // Minter functions
+
+    function mintData(address minterAddress, address to, string memory uri) public returns (uint256){
+        require(minterAddressToUser[minterAddress] == msg.sender, 'sender does not own this minter');
+
+        return Minter(minterAddress).mintData(to, uri);
+    }
+
+    function totalSupply(address minterAddress) public view returns (uint256){
+        return Minter(minterAddress).totalSupply();
+    }
+
+    function tokenURI(address minterAddress, uint256 tokenId) public view returns (string memory){
+        return Minter(minterAddress).tokenURI(tokenId);
+    }
 }
