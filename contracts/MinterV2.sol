@@ -6,8 +6,10 @@ import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721URISto
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
 
-/// @custom:security-contact ryuen@nbai.io
-contract Minter is ERC721Upgradeable, ERC721URIStorageUpgradeable, OwnableUpgradeable {
+/////////////////////////////////////////////
+// This contract is used for testing only! //
+/////////////////////////////////////////////
+contract MinterV2 is ERC721Upgradeable, ERC721URIStorageUpgradeable, OwnableUpgradeable {
     using CountersUpgradeable for CountersUpgradeable.Counter;
 
     CountersUpgradeable.Counter private _tokenIdCounter;
@@ -105,5 +107,9 @@ contract Minter is ERC721Upgradeable, ERC721URIStorageUpgradeable, OwnableUpgrad
 
     function setSymbol(string memory symbol_) public onlyAdmin {
         _symbol = symbol_;
+    }
+
+    function newFeature() public pure returns (string memory) {
+        return 'new minter feature';
     }
 }

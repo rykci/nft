@@ -6,6 +6,7 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "./Minter.sol";
 
 contract MinterFactory is OwnableUpgradeable{
+    address[] minters;
     mapping(address => address) private minterAddressToUser;
     mapping(address => address[]) private userToMinterAddresses;
 
@@ -14,10 +15,12 @@ contract MinterFactory is OwnableUpgradeable{
     }
 
     function createMinter(string calldata name, string calldata symbol) public returns (address){
-        Minter minter = new Minter(msg.sender, name, symbol); // new Minter instance
+        Minter minter = new Minter(); // new Minter instance
+        Minter(address(minter)).initialize(msg.sender, name, symbol);
         Minter(address(minter)).setAdmin(address(this)); // set factory as admin
         Minter(address(minter)).transferOwnership(msg.sender); // set msg.sender as owner
 
+        minters.push(address(minter));
         userToMinterAddresses[msg.sender].push(address(minter));
         minterAddressToUser[address(minter)] = (msg.sender);
 
@@ -28,6 +31,10 @@ contract MinterFactory is OwnableUpgradeable{
 
     function getMinterAddresses(address user) public view returns (address[] memory) {
         return userToMinterAddresses[user];
+    }
+
+    function getAllMinters() public view returns (address[] memory) {
+        return minters;
     }
 
     // Minter functions
