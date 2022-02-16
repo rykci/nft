@@ -5,7 +5,7 @@ const mint = async (signer, metadataUri) => {
 
   try {
     // Attach contract
-    const MinterContract = await ethers.getContractFactory('MCPNFT')
+    const MinterContract = await ethers.getContractFactory('Minter')
     const databaseMinter = await MinterContract.attach(contractAddr)
     console.log('Contract address: ', contractAddr, ' on network ', networkName)
 

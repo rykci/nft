@@ -1,6 +1,11 @@
 const { task } = require('hardhat/config')
 const fs = require('fs').promises
 const { mcpUpload } = require('./helper/mcpUpload')
+const {
+  getAverageStoragePricePerByte,
+} = require('./helper/getAverageStoragePricePerByte')
+const { lockTokens } = require('./helper/lockTokens')
+const { paymentInfo } = require('./helper/paymentInfo')
 const { generateMetadata } = require('./helper/generateMetadata')
 const { mint } = require('./helper/mint')
 
@@ -22,14 +27,43 @@ task('uploadLockMint', 'single task, to upload file, lock tokens, and mint nft')
 
     console.log(uploadResponse)
 
-    //generateMetadata(cid, name, desc)
+    const fileSize = (await fs.stat(file)).size
+    console.log('file size: ' + fileSize + ' bytes')
+
+    // check if the file needs payment
+    let txHash = ''
+    if (uploadResponse.data.need_pay % 2 == 0) {
+      // payment
+      const pricePerByte = await getAverageStoragePricePerByte()
+      const lockAmount = Math.round(pricePerByte * fileSize)
+      console.log('lock amount: ' + lockAmount)
+
+      // lockTokens
+      try {
+        console.log('locking tokens...')
+        txHash = await lockTokens(payload_cid, signer, lockAmount, fileSize)
+      } catch (err) {
+        console.log('payment transaction failed')
+        console.log(err)
+        return txHash
+      }
+    } else {
+      // get existing tx_hash
+      console.log('payment found, getting tx hash...')
+      const paymentStatus = await paymentInfo(payload_cid)
+      txHash = paymentStatus.tx_hash
+    }
+
+    console.log('tx hash: ' + txHash)
+
+    // generateMetadata(cid, name, desc)
     console.log('Generating JSON metadata...')
     const metadata = generateMetadata(
       uploadResponse.data.ipfs_url,
       name || fileName,
       desc,
-      '',
-      uploadResponse.file_size,
+      txHash,
+      fileSize,
     )
 
     console.log(metadata)
