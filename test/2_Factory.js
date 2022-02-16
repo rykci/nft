@@ -36,8 +36,22 @@ describe('Factory', function () {
     minter = await Minter.attach(minterAddress)
     await minter.mintData(owner.address, 'NFT1')
 
+    expect(await factory.totalSupply(minterAddress)).to.equal('1')
     expect(await minter.totalSupply()).to.equal('1')
+    expect(await factory.tokenURI(minterAddress, 1)).to.equal('NFT1')
     expect(await minter.tokenURI(1)).to.equal('NFT1')
+  })
+
+  it('Mint from factory', async () => {
+    const minterAddress = (await factory.getMinterAddresses(owner.address))[0]
+    await factory.mintData(minterAddress, owner.address, 'NFT2')
+
+    minter = await Minter.attach(minterAddress)
+
+    expect(await factory.totalSupply(minterAddress)).to.equal('2')
+    expect(await minter.totalSupply()).to.equal('2')
+    expect(await factory.tokenURI(minterAddress, 2)).to.equal('NFT2')
+    expect(await minter.tokenURI(2)).to.equal('NFT2')
   })
 
   it('Unauthorized mint should revert', async () => {
@@ -55,5 +69,18 @@ describe('Factory', function () {
     expect(await factory.newFeature()).to.equal(
       'this implementation has the new feature!',
     )
+  })
+
+  it('Upgrade multiple minters', async () => {
+    await factory.createMinter('Minter2', 'MTR2')
+    await factory.connect(addr1).createMinter('Minter3', 'MTR3')
+
+    const MinterV2 = await ethers.getContractFactory('MinterV2')
+    const addresses = await factory.getAllMinters()
+
+    addresses.forEach(async (address) => {
+      minter = await upgrades.upgradeProxy(address, MinterV2)
+      expect(await minter.newFeature()).to.equal('new minter feature')
+    })
   })
 })

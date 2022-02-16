@@ -5,7 +5,11 @@ async function main() {
   const admin = await ethers.getSigner()
 
   const Minter = await ethers.getContractFactory('Minter')
-  const minter = await Minter.deploy(admin.address, 'Test Token', 'TTKN')
+  const minter = await upgrades.deployProxy(Minter, [
+    admin.address,
+    'Test Token',
+    'TTKN',
+  ])
 
   await minter.deployed()
 
