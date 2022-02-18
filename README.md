@@ -46,7 +46,7 @@ An example config is given as .env.example for reference.
 
 ## Deploy Contract
 
-Deploy the Minter contract using `npx hardhat run deploy --name <COLLECTION_NAME> --symbol <TOKEN_TICKER>` . \
+Deploy the Minter contract using `npx hardhat deploy --name <COLLECTION_NAME> --symbol <TOKEN_TICKER>` . \
 Since `Minter.sol` is an upgradeable smart contract, this script will deploy a proxy. \
 You can also add `--network <NETWORK_NAME>` to specify which network to deploy to. \
 Currently, the default network is the **Mumbai testnet**
