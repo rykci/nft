@@ -5,13 +5,15 @@ const { paymentInfo } = require('./helper/paymentInfo')
 const { mint } = require('./helper/mint')
 
 task('mint', 'Create metadata JSON file for uploaded file and mint as NFT')
-  .addParam('cid', 'cid of the file')
+  .addParam('uri', 'ipfs URI of the file')
   .addOptionalParam('name', 'name of the NFT')
   .addOptionalParam('desc', 'description of the NFT')
-  .setAction(async ({ cid, name, desc }) => {
+  .addOptionalParam('size', 'size of file')
+  .setAction(async ({ uri, name, desc, size }) => {
     const signer = await ethers.getSigner()
+    const cid = uri.split('/').pop()
     const hash = (await paymentInfo(cid)).tx_hash
-    const metadata = generateMetadata(cid, name, desc, hash, '')
+    const metadata = generateMetadata(uri, name, desc, hash, size || '')
     console.log(metadata)
 
     const uploadResponse = await mcpUpload(
@@ -28,5 +30,5 @@ task('mint', 'Create metadata JSON file for uploaded file and mint as NFT')
 
     // mint NFT!
     console.log('Minting NFT...')
-    await mint(signer, nft_uri)
+    await mint(signer, nft_uri, cid)
   })

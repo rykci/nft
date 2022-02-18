@@ -22,7 +22,7 @@ const getAverageStoragePricePerByte = async () => {
     )
     const usdcPerFilecoin = conversionResponse?.data?.data
 
-    return avgFilecoinStoragePrice * usdcPerFilecoin * 10 ** 9 // USDC price per byte
+    return avgFilecoinStoragePrice * usdcPerFilecoin * 1.074 * 10 ** 9 // USDC price per byte
   } catch (err) {
     // Handle Error Here
     console.error(err)

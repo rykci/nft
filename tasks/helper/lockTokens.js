@@ -1,4 +1,4 @@
-const lockTokens = async (cid, payer, amount, fileSize) => {
+const lockTokens = async (cid, payer, amount, fileSize, source_file_id) => {
   require('dotenv').config
   const erc20ABI = require('../../abi/ERC20.json')
   const swanPaymentABI = require('../../abi/SwanPayment.json')
@@ -12,9 +12,9 @@ const lockTokens = async (cid, payer, amount, fileSize) => {
     gasLimit: 9999999,
   }
 
-  const usdcAddress = process.env.USDC_ADDRESS
-  const recipientAddress = process.env.RECIPIENT_ADDRESS
-  const gatewayContractAddress = process.env.SWAN_PAYMENT_ADDRESS
+  const usdcAddress = network.config.USDC_ADDRESS
+  const recipientAddress = network.config.RECIPIENT_ADDRESS
+  const gatewayContractAddress = network.config.SWAN_PAYMENT_ADDRESS
 
   const USDCInstance = new ethers.Contract(usdcAddress, erc20ABI)
   await USDCInstance.connect(payer).approve(gatewayContractAddress, oneThousand)
@@ -28,16 +28,40 @@ const lockTokens = async (cid, payer, amount, fileSize) => {
     {
       id: cid,
       minPayment: amount,
-      amount: (parseInt(amount) * 3).toString(),
+      amount: (amount * 3).toString(),
       lockTime: 86400 * 6, // 6 days
       recipient: recipientAddress, //todo:
       size: fileSize,
-      storage_copy: 5,
+      copyLimit: 1,
     },
     overrides,
   )
 
   await tx.wait()
+
+  // write lockpayment result to db
+  try {
+    const lockParam = {
+      tx_hash: tx.hash,
+      payload_cid: uploadResponse.data.payload_cid,
+      min_payment: amount.toString(),
+      contract_address: network.config.SWAN_PAYMENT_ADDRESS,
+      address_from: payer.address,
+      address_to: network.config.SWAN_PAYMENT_ADDRESS,
+      lock_payment_time: new Date().getTime(),
+      source_file_id: source_file_id,
+    }
+
+    console.log(lockParam)
+
+    const res = await axios.post(
+      `${network.config.mcp_api}/billing/deal/lockpayment`,
+      lockParam,
+    )
+  } catch (err) {
+    console.log('write lockpayment result to db error')
+    console.log(err)
+  }
 
   return tx.hash
 }

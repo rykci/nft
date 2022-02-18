@@ -13,6 +13,7 @@
     "@openzeppelin/contracts": "^4.3.2",
     "@openzeppelin/contracts-upgradeable": "^4.4.2",
     "axios": "^0.24.0",
+    "chalk": "^5.0.0",
     "dotenv": "^10.0.0"
   }
 }

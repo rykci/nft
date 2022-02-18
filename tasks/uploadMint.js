@@ -1,5 +1,6 @@
 const { task } = require('hardhat/config')
 const fs = require('fs').promises
+const axios = require('axios')
 const { mcpUpload } = require('./helper/mcpUpload')
 const {
   getAverageStoragePricePerByte,
@@ -9,7 +10,7 @@ const { paymentInfo } = require('./helper/paymentInfo')
 const { generateMetadata } = require('./helper/generateMetadata')
 const { mint } = require('./helper/mint')
 
-task('uploadLockMint', 'single task, to upload file, lock tokens, and mint nft')
+task('uploadMint', 'single task to upload file, lock tokens, and mint nft')
   .addParam('file', 'file to upload')
   .addOptionalParam('name', 'name of nft')
   .addOptionalParam('desc', 'desc of nft')
@@ -35,13 +36,19 @@ task('uploadLockMint', 'single task, to upload file, lock tokens, and mint nft')
     if (uploadResponse.data.need_pay % 2 == 0) {
       // payment
       const pricePerByte = await getAverageStoragePricePerByte()
-      const lockAmount = Math.round(pricePerByte * fileSize)
-      console.log('lock amount: ' + lockAmount)
+      const minPayment = Math.round(pricePerByte * fileSize)
+      console.log('min amount: ' + minPayment)
 
       // lockTokens
       try {
         console.log('locking tokens...')
-        txHash = await lockTokens(payload_cid, signer, lockAmount, fileSize)
+        txHash = await lockTokens(
+          payload_cid,
+          signer,
+          minPayment,
+          fileSize,
+          uploadResponse.data.source_file_id,
+        )
       } catch (err) {
         console.log('payment transaction failed')
         console.log(err)
@@ -69,7 +76,7 @@ task('uploadLockMint', 'single task, to upload file, lock tokens, and mint nft')
     console.log(metadata)
 
     // upload JSON to MCP
-    console.log('Uploading metadata to IPFS...')
+    console.log('Uploading metadata to MCP...')
     const metadataUploadResponse = await mcpUpload(
       `${metadata.name}.json`,
       JSON.stringify(metadata),
@@ -84,5 +91,5 @@ task('uploadLockMint', 'single task, to upload file, lock tokens, and mint nft')
 
     // mint NFT!
     console.log('Minting NFT...')
-    await mint(signer, nft_uri)
+    await mint(signer, nft_uri, payload_cid)
   })
