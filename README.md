@@ -1,5 +1,8 @@
 # NFT
 
+This project allows the user to easily deploy their own ERC721 contracts, 
+as well as minting their own NFTs via IPFS using the terminal
+
 **Technology Stack**: Javascript, Node.js, Solidity, Hardhat
 
 ## Contracts
@@ -43,13 +46,19 @@ An example config is given as .env.example for reference.
 
 ## Deploy Contract
 
-Deploy the Minter contract using `npx hardhat run scripts/createMinter.js`. \
+Deploy the Minter contract using `npx hardhat run deploy --name <COLLECTION_NAME> --symbol <TOKEN_TICKER>` . \
 Since `Minter.sol` is an upgradeable smart contract, this script will deploy a proxy. \
-You can also add `--network <NETWORK_NAME>` to specify which network to deploy to.
+You can also add `--network <NETWORK_NAME>` to specify which network to deploy to. \
+Currently, the default network is the **Mumbai testnet**
 
-You can edit the name and symbol of your ERC721 in the script.
+Additional parameters can be added to provide metadata for your collection
+- `--desc`: Collection description
+- `--image`: URL of an image for your collection (preferably IPFS URI)
+- `--link`: An external link to your website (usually to provide more information about your NFT)
+- `--fee`: here you can set a trading fee for you NFTs (a value of 100 indicates a 1% fee)
+- `--recipient`: the address where the seller fees will be paid to
 
-Store the contract address in the `hardhat.config.js` with key `contract` under the correct network.
+**Store the contract address in the `hardhat.config.js` with key `contract` under the correct network.**
 
 ## Run Tests
 
