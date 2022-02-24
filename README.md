@@ -35,7 +35,7 @@ An example config is given as .env.example for reference.
 
 - `MUMBAI_URL`: Mumbai RPC to interact with the payment and minting smart contract
 - `PRIVATE_KEY`: Your ETH wallet's private key used to pay for transactions
-- `MCP_API` : Endpoint to interact with MCP API
+- `MCS_API` : Endpoint to interact with MCS API
 - `FILSWAN_API` : Endpoint to interact with Filswan API
 - `RECIPIENT_ADDRESS` : Contract address for FS3 provider
 - `USDC_ADDRESS` : ERC20 Contract address for USDC token

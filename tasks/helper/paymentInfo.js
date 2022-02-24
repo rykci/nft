@@ -3,7 +3,7 @@ const paymentInfo = async (payload_cid) => {
 
   try {
     const res = await axios.get(
-      `${network.config.mcp_api}/billing/deal/lockpayment/info?payload_cid=${payload_cid}`,
+      `${network.config.mcs_api}/billing/deal/lockpayment/info?payload_cid=${payload_cid}`,
     )
     return res?.data?.data
   } catch (err) {

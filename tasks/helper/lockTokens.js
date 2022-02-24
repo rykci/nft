@@ -55,7 +55,7 @@ const lockTokens = async (cid, payer, amount, fileSize, source_file_id) => {
     console.log(lockParam)
 
     const res = await axios.post(
-      `${network.config.mcp_api}/billing/deal/lockpayment`,
+      `${network.config.mcs_api}/billing/deal/lockpayment`,
       lockParam,
     )
   } catch (err) {

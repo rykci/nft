@@ -24,12 +24,12 @@ const mint = async (signer, metadataUri, cid) => {
     const mintInfoJson = {
       payload_cid: cid,
       tx_hash: tx.hash,
-      token_id: tokenId,
+      token_id: tokenId.toString(),
       mint_address: contractAddr,
     }
     try {
       const mintInfoResponse = await axios.post(
-        `${network.config.mcp_api}/storage/mint/info`,
+        `${network.config.mcs_api}/storage/mint/info`,
         mintInfoJson,
       )
     } catch (err) {

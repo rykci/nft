@@ -1,5 +1,5 @@
 const { task } = require('hardhat/config')
-const { mcpUpload } = require('./helper/mcpUpload')
+const { mcsUpload } = require('./helper/mcsUpload')
 const {
   getAverageStoragePricePerByte,
 } = require('./helper/getAverageStoragePricePerByte')
@@ -11,7 +11,7 @@ const fs = require('fs').promises
 const FormData = require('form-data')
 require('dotenv').config
 
-task('upload', 'Upload directory to MCP and lock token payment')
+task('upload', 'Upload directory to MCS and lock token payment')
   .addParam('file', 'The path of the file you wish to upload to IPFS')
   .addOptionalParam('duration', 'duration (defaults to 180)')
   .setAction(async ({ file, duration }) => {
@@ -21,14 +21,13 @@ task('upload', 'Upload directory to MCP and lock token payment')
     const fileName = file.split('/').pop()
     const fileSize = (await fs.stat(file)).size
 
-    console.log('Uploading file to MCP...')
-    const uploadResponse = await mcpUpload(
+    const uploadResponse = await mcsUpload(
       fileName,
       _file,
       signer.address,
       duration,
       file.split('.').pop() == 'json' ? 1 : 0,
-    ) // upload file to MCP
+    ) // upload file to MCS
 
     console.log(uploadResponse)
 

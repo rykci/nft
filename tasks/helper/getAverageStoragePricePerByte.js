@@ -18,7 +18,7 @@ const getAverageStoragePricePerByte = async () => {
     const avgFilecoinStoragePrice = await getAverageFilecoinStoragePrice()
 
     const conversionResponse = await axios.get(
-      `${network.config.mcp_api}/billing/price/filecoin`,
+      `${network.config.mcs_api}/billing/price/filecoin`,
     )
     const usdcPerFilecoin = conversionResponse?.data?.data
 

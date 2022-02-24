@@ -1,4 +1,4 @@
-const mcpUpload = async (
+const mcsUpload = async (
   fileName,
   file,
   wallet_address,
@@ -14,9 +14,10 @@ const mcpUpload = async (
   form.append('wallet_address', wallet_address)
   form.append('file_type', file_type)
 
+  console.log('Uploading file to MCS...')
   try {
     const response = await axios.post(
-      `${network.config.mcp_api}/storage/ipfs/upload`,
+      `${network.config.mcs_api}/storage/ipfs/upload`,
       form,
       {
         headers: {
@@ -31,4 +32,4 @@ const mcpUpload = async (
   }
 }
 
-module.exports = { mcpUpload }
+module.exports = { mcsUpload }
