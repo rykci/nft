@@ -4,11 +4,10 @@ pragma solidity ^0.8.2;
 import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721URIStorageUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
 
 /// @custom:security-contact ryuen@nbai.io
-contract Minter is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeable, OwnableUpgradeable {
+contract Minter is ERC721Upgradeable, ERC721URIStorageUpgradeable, OwnableUpgradeable {
     using CountersUpgradeable for CountersUpgradeable.Counter;
 
     CountersUpgradeable.Counter private _tokenIdCounter;
@@ -20,10 +19,7 @@ contract Minter is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeable
 
     mapping (address => bool) isAdmin;
 
-    /// @custom:oz-upgrades-unsafe-allow constructor
-    //constructor() initializer {}
-
-    function initialize(address _admin, string memory name_, string memory symbol_) initializer public {
+    function initialize(address _admin, string memory name_, string memory symbol_) public initializer {
         require(_admin != address(0));
         isAdmin[_admin] = true;
 
@@ -31,9 +27,8 @@ contract Minter is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeable
         __ERC721URIStorage_init();
         __Ownable_init();
 
-        setName(name_);
-        setSymbol(symbol_);
-
+        _name = name_;
+        _symbol = symbol_;
     }
 
     modifier onlyAdmin {
@@ -85,7 +80,6 @@ contract Minter is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeable
     function setBaseURI(string memory _newBaseURI) public onlyAdmin {
         baseURI = _newBaseURI;
     }
-
 
     function setContractURI(string memory _newContractURI) public onlyAdmin {
         contractURI = _newContractURI;

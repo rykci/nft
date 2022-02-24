@@ -52,12 +52,10 @@ describe('Minter', function () {
     ).to.be.revertedWith('this sender is not an admin')
   })
 
-  it('Should be upgradeable', async () => {
+  it('Minter upgradeable', async () => {
     const MinterV2 = await ethers.getContractFactory('MinterV2')
     minter = await upgrades.upgradeProxy(minter.address, MinterV2)
 
-    expect(await minter.newFeature()).to.equal(
-      'this implementation has the new feature!',
-    )
+    expect(await minter.newFeature()).to.equal('new minter feature')
   })
 })

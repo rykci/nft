@@ -4,13 +4,12 @@ pragma solidity ^0.8.2;
 import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721URIStorageUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
 
-//////////////////////////////////////////////
-// This contract is only used for testing!! //
-//////////////////////////////////////////////
-contract MinterV2 is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeable, OwnableUpgradeable {
+/////////////////////////////////////////////
+// This contract is used for testing only! //
+/////////////////////////////////////////////
+contract MinterV2 is ERC721Upgradeable, ERC721URIStorageUpgradeable, OwnableUpgradeable {
     using CountersUpgradeable for CountersUpgradeable.Counter;
 
     CountersUpgradeable.Counter private _tokenIdCounter;
@@ -22,10 +21,7 @@ contract MinterV2 is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeab
 
     mapping (address => bool) isAdmin;
 
-    /// @custom:oz-upgrades-unsafe-allow constructor
-    //constructor() initializer {}
-
-    function initialize(address _admin, string memory name_, string memory symbol_) initializer public {
+    function initialize(address _admin, string memory name_, string memory symbol_) public initializer {
         require(_admin != address(0));
         isAdmin[_admin] = true;
 
@@ -33,9 +29,8 @@ contract MinterV2 is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeab
         __ERC721URIStorage_init();
         __Ownable_init();
 
-        setName(name_);
-        setSymbol(symbol_);
-
+        _name = name_;
+        _symbol = symbol_;
     }
 
     modifier onlyAdmin {
@@ -88,7 +83,6 @@ contract MinterV2 is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeab
         baseURI = _newBaseURI;
     }
 
-
     function setContractURI(string memory _newContractURI) public onlyAdmin {
         contractURI = _newContractURI;
     }
@@ -116,6 +110,6 @@ contract MinterV2 is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeab
     }
 
     function newFeature() public pure returns (string memory) {
-        return 'this implementation has the new feature!';
+        return 'new minter feature';
     }
 }
