@@ -27,6 +27,7 @@ const mint = async (signer, metadataUri, cid) => {
       token_id: tokenId.toString(),
       mint_address: contractAddr,
     }
+
     try {
       const mintInfoResponse = await axios.post(
         `${network.config.mcs_api}/storage/mint/info`,
