@@ -1,5 +1,5 @@
 const { task } = require('hardhat/config')
-const { mcpUpload } = require('./helper/mcpUpload')
+const { mcsUpload } = require('./helper/mcsUpload')
 
 task('deploy', 'Deploy ERC721 contract with contractURI for opensea')
   .addParam('name', 'name of your NFT collection')
@@ -23,9 +23,7 @@ task('deploy', 'Deploy ERC721 contract with contractURI for opensea')
       fee_recipient: recipient,
     }
 
-    console.log('uploading contract metadata to MCP...')
-
-    const uploadResponse = await mcpUpload(
+    const uploadResponse = await mcsUpload(
       `${contractMetadata.name}.json`,
       JSON.stringify(contractMetadata),
       signer.address,

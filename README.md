@@ -1,6 +1,6 @@
 # NFT
 
-This project allows the user to easily deploy their own ERC721 contracts, 
+This project allows the user to easily deploy their own ERC721 contracts,
 as well as minting their own NFTs via IPFS using the terminal
 
 **Technology Stack**: Javascript, Node.js, Solidity, Hardhat
@@ -38,11 +38,8 @@ An example config is given as .env.example for reference.
 
 - `MUMBAI_URL`: Mumbai RPC to interact with the payment and minting smart contract
 - `PRIVATE_KEY`: Your ETH wallet's private key used to pay for transactions
-- `MCP_API` : Endpoint to interact with MCP API
+- `MCS_API` : Endpoint to interact with MCS API
 - `FILSWAN_API` : Endpoint to interact with Filswan API
-- `RECIPIENT_ADDRESS` : Contract address for FS3 provider
-- `USDC_ADDRESS` : ERC20 Contract address for USDC token
-- `SWAN_PAYMENT_ADDRESS` : Contract address to handle token payments
 
 ## Deploy Contract
 
@@ -52,6 +49,7 @@ You can also add `--network <NETWORK_NAME>` to specify which network to deploy t
 Currently, the default network is the **Mumbai testnet**
 
 Additional parameters can be added to provide metadata for your collection
+
 - `--desc`: Collection description
 - `--image`: URL of an image for your collection (preferably IPFS URI)
 - `--link`: An external link to your website (usually to provide more information about your NFT)
@@ -68,10 +66,10 @@ Some tests are written under the `./test/` folder. These can be run using `npx h
 
 Use command npx hardhat `uploadLockMint --file <PATH>`. This script uses helper functions to:
 
-- upload the file to MCP
+- upload the file to MCS
 - lock token payment (will need some USDC)
 - generate metadata JSON
-- upload metadata to MCP
+- upload metadata to MCS
 - mint NFT
 
 Optional params include `--name <NFT_NAME> and --desc <NFT_DESCRIPTION>` The metadata will look like:
@@ -88,8 +86,8 @@ Optional params include `--name <NFT_NAME> and --desc <NFT_DESCRIPTION>` The met
 
 Alternatively, you can also use other commands for a step-by-step process.
 
-1. Use `npx hardhat upload --file <PATH>` to upload your file to MCP and lock token payment.
-2. Use `npx hardhat mint --cid <FILE_CID>` to generate NFT metadata, upload to MCP, and mint
+1. Use `npx hardhat upload --file <PATH>` to upload your file to MCS and lock token payment.
+2. Use `npx hardhat mint --cid <FILE_CID>` to generate NFT metadata, upload to MCS, and mint
    - Optional parameters include `--name <NFT_NAME>` and `--desc <NFT_DESCRIPTION>`
 
 ## Token URI

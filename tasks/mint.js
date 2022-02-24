@@ -1,6 +1,6 @@
 const { task } = require('hardhat/config')
 const { generateMetadata } = require('./helper/generateMetadata')
-const { mcpUpload } = require('./helper/mcpUpload')
+const { mcsUpload } = require('./helper/mcsUpload')
 const { paymentInfo } = require('./helper/paymentInfo')
 const { mint } = require('./helper/mint')
 
@@ -16,7 +16,7 @@ task('mint', 'Create metadata JSON file for uploaded file and mint as NFT')
     const metadata = generateMetadata(uri, name, desc, hash, size || '')
     console.log(metadata)
 
-    const uploadResponse = await mcpUpload(
+    const uploadResponse = await mcsUpload(
       `${metadata.name}.json`,
       JSON.stringify(metadata),
       signer.address,

@@ -1,5 +1,6 @@
 const lockTokens = async (cid, payer, amount, fileSize, source_file_id) => {
   require('dotenv').config
+  const axios = require('axios')
   const erc20ABI = require('../../abi/ERC20.json')
   const swanPaymentABI = require('../../abi/SwanPayment.json')
 
@@ -43,7 +44,7 @@ const lockTokens = async (cid, payer, amount, fileSize, source_file_id) => {
   try {
     const lockParam = {
       tx_hash: tx.hash,
-      payload_cid: uploadResponse.data.payload_cid,
+      payload_cid: cid,
       min_payment: amount.toString(),
       contract_address: network.config.SWAN_PAYMENT_ADDRESS,
       address_from: payer.address,
@@ -55,7 +56,7 @@ const lockTokens = async (cid, payer, amount, fileSize, source_file_id) => {
     console.log(lockParam)
 
     const res = await axios.post(
-      `${network.config.mcp_api}/billing/deal/lockpayment`,
+      `${network.config.mcs_api}/billing/deal/lockpayment`,
       lockParam,
     )
   } catch (err) {

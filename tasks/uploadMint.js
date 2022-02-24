@@ -1,7 +1,7 @@
 const { task } = require('hardhat/config')
 const fs = require('fs').promises
 const axios = require('axios')
-const { mcpUpload } = require('./helper/mcpUpload')
+const { mcsUpload } = require('./helper/mcsUpload')
 const {
   getAverageStoragePricePerByte,
 } = require('./helper/getAverageStoragePricePerByte')
@@ -20,12 +20,9 @@ task('uploadMint', 'single task to upload file, lock tokens, and mint nft')
     const _file = await fs.readFile(file) // read file
     const fileName = file.split('/').pop()
 
-    // upload file to MCP
-    console.log('Uploading file to MCP...')
-    const uploadResponse = await mcpUpload(fileName, _file, signer.address)
-
+    // upload file to MCS
+    const uploadResponse = await mcsUpload(fileName, _file, signer.address)
     const payload_cid = uploadResponse.data.payload_cid
-
     console.log(uploadResponse)
 
     const fileSize = (await fs.stat(file)).size
@@ -75,9 +72,8 @@ task('uploadMint', 'single task to upload file, lock tokens, and mint nft')
 
     console.log(metadata)
 
-    // upload JSON to MCP
-    console.log('Uploading metadata to MCP...')
-    const metadataUploadResponse = await mcpUpload(
+    // upload JSON to MCS
+    const metadataUploadResponse = await mcsUpload(
       `${metadata.name}.json`,
       JSON.stringify(metadata),
       signer.address,
