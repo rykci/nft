@@ -36,6 +36,8 @@ task('upload', 'Upload directory to MCS and lock token payment')
       console.log('locking tokens...')
       const pricePerByte = await getAverageStoragePricePerByte()
       minPayment = Math.round(pricePerByte * fileSize)
+      console.log('min payment: ' + minPayment)
+
       txHash = await lockTokens(
         uploadResponse.data.payload_cid,
         signer,
