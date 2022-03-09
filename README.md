@@ -64,7 +64,7 @@ Some tests are written under the `./test/` folder. These can be run using `npx h
 
 ## Mint From Terminal
 
-Use command npx hardhat `uploadMint --file <PATH>`. This script uses helper functions to:
+Use command `npx hardhat uploadMint --file <PATH>`. This script uses helper functions to:
 
 - upload the file to MCS
 - lock token payment (will need some USDC)
