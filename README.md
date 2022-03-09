@@ -60,11 +60,11 @@ Additional parameters can be added to provide metadata for your collection
 
 ## Run Tests
 
-Some tests are written under the `./test/` folder. These can be run using `npx hardhat test`
+Some tests are written under the `./test/` folder. These can be run using `npx hardhat test --network hardhat`
 
 ## Mint From Terminal
 
-Use command npx hardhat `uploadLockMint --file <PATH>`. This script uses helper functions to:
+Use command npx hardhat `uploadMint --file <PATH>`. This script uses helper functions to:
 
 - upload the file to MCS
 - lock token payment (will need some USDC)
