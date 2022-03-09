@@ -27,6 +27,16 @@
             "internalType": "address",
             "name": "recipient",
             "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "size",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint8",
+            "name": "copyLimit",
+            "type": "uint8"
           }
         ],
         "internalType": "struct IPaymentMinimal.lockPaymentParam",
