@@ -35,14 +35,14 @@ task('upload', 'upload file to MCS and lock token payment')
     if (uploadResponse.data.need_pay % 2 == 0) {
       console.log('locking tokens...')
       const pricePerByte = await getAverageStoragePricePerByte()
-      minPayment = Math.round(pricePerByte * fileSize * duration)
+      minPayment = Math.round(pricePerByte * fileSize * 180)
       console.log('min payment: ' + minPayment)
 
       txHash = await lockTokens(
         uploadResponse.data.payload_cid,
         signer,
         minPayment,
-        fileSize,
+        0,
         uploadResponse.data.source_file_id,
       )
     } else {
