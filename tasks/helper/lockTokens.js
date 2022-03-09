@@ -32,7 +32,7 @@ const lockTokens = async (cid, payer, amount, fileSize, source_file_id) => {
       amount: (amount * 3).toString(),
       lockTime: 86400 * 6, // 6 days
       recipient: recipientAddress, //todo:
-      size: fileSize,
+      size: 0,
       copyLimit: 1,
     },
     overrides,
@@ -41,6 +41,8 @@ const lockTokens = async (cid, payer, amount, fileSize, source_file_id) => {
   await tx.wait()
 
   // write lockpayment result to db
+  // not implemented in current calibration env
+  /*
   try {
     const lockParam = {
       tx_hash: tx.hash,
@@ -62,7 +64,7 @@ const lockTokens = async (cid, payer, amount, fileSize, source_file_id) => {
   } catch (err) {
     console.log('write lockpayment result to db error')
     console.log(err)
-  }
+  } */
 
   return tx.hash
 }

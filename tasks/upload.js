@@ -11,7 +11,7 @@ const fs = require('fs').promises
 const FormData = require('form-data')
 require('dotenv').config
 
-task('upload', 'Upload directory to MCS and lock token payment')
+task('upload', 'upload file to MCS and lock token payment')
   .addParam('file', 'The path of the file you wish to upload to IPFS')
   .addOptionalParam('duration', 'duration (defaults to 180)')
   .setAction(async ({ file, duration }) => {
@@ -35,7 +35,7 @@ task('upload', 'Upload directory to MCS and lock token payment')
     if (uploadResponse.data.need_pay % 2 == 0) {
       console.log('locking tokens...')
       const pricePerByte = await getAverageStoragePricePerByte()
-      minPayment = Math.round(pricePerByte * fileSize)
+      minPayment = Math.round(pricePerByte * fileSize * duration)
       console.log('min payment: ' + minPayment)
 
       txHash = await lockTokens(

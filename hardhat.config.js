@@ -26,7 +26,7 @@ module.exports = {
       openseaUrl: `https://testnets.opensea.io/assets`,
       RECIPIENT_ADDRESS: '0xABeAAb124e6b52afFF504DB71bbF08D0A768D053',
       USDC_ADDRESS: '0xe11A86849d99F524cAC3E7A0Ec1241828e332C62',
-      SWAN_PAYMENT_ADDRESS: '0x12EDC75CE16d778Dc450960d5f1a744477ee49a0',
+      SWAN_PAYMENT_ADDRESS: '0x7ab09f9ab4d39cfbe0551dfb6adac63c89bb955b',
     },
   },
 }

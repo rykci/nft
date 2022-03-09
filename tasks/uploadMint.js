@@ -33,7 +33,7 @@ task('uploadMint', 'single task to upload file, lock tokens, and mint nft')
     if (uploadResponse.data.need_pay % 2 == 0) {
       // payment
       const pricePerByte = await getAverageStoragePricePerByte()
-      const minPayment = Math.round(pricePerByte * fileSize)
+      const minPayment = Math.round(pricePerByte * fileSize * 180)
       console.log('min amount: ' + minPayment)
 
       // lockTokens
