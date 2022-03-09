@@ -36,7 +36,7 @@ Set up an .env file which stores your
 information as environment variables. \
 An example config is given as .env.example for reference.
 
-- `MUMBAI_URL`: Mumbai RPC to interact with the payment and minting smart contract
+- `MUMBAI_URL`: Mumbai RPC to interact with the payment and minting smart contract. Get API key from [Alchemy](https://www.alchemy.com/)
 - `PRIVATE_KEY`: Your ETH wallet's private key used to pay for transactions
 - `MCS_API` : Endpoint to interact with MCS API
 - `FILSWAN_API` : Endpoint to interact with Filswan API
