@@ -7,6 +7,7 @@ require('./tasks/uploadMint')
 require('./tasks/upload')
 require('./tasks/mint')
 require('./tasks/deploy')
+require('./tasks/batchUpload')
 
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more

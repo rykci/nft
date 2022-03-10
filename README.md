@@ -62,6 +62,20 @@ Additional parameters can be added to provide metadata for your collection
 
 Some tests are written under the `./test/` folder. These can be run using `npx hardhat test --network hardhat`
 
+## Batch Upload
+
+This option is provided for users who have many files to upload, note that these files will not be automatically paid for. \
+First you will need a csv file will the format `fileName, filePath`
+
+```
+fileName, filePath
+file1, path/to/file1
+file2, path/to/file2
+
+```
+
+use command `npx hardhat batchUpload --file <CSV_PATH>` to perform the batch upload
+
 ## Mint From Terminal
 
 Use command `npx hardhat uploadMint --file <PATH>`. This script uses helper functions to:
