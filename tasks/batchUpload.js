@@ -10,7 +10,7 @@ const uploadPromise = (
   fileName,
   file,
   wallet_address,
-  duration = 180,
+  duration = 525,
   file_type = '0',
 ) => {
   const form = new FormData()
@@ -45,12 +45,18 @@ task('batchUpload', 'upload files from csv file to MCS')
       })),
     )
 
-    // send post request for each row
-    const requests = csvArray.map((row) =>
-      uploadPromise(row.fileName, row.file, signer.address).then(
-        (res) => res.data,
-      ),
-    )
+    const delayIncrement = 500
+    let delay = 0
+
+    // send post request for each row (with delay)
+    const requests = csvArray.map((row) => {
+      delay += delayIncrement // staggers each api call
+      return new Promise((resolve) => setTimeout(resolve, delay)).then(() =>
+        uploadPromise(row.fileName, row.file, signer.address).then(
+          (res) => res.data,
+        ),
+      )
+    })
 
     try {
       const result = await Promise.all(requests) // wait for all uploads
