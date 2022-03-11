@@ -64,8 +64,8 @@ Some tests are written under the `./test/` folder. These can be run using `npx h
 
 ## Batch Upload
 
-This option is provided for users who have many files to upload, note that these files will not be automatically paid for. \
-First you will need a csv file will the format `fileName, filePath`
+This option is provided for users who have many files to upload, note that these files will not be automatically paid for.
+First you will need a csv file with the format `fileName, filePath`
 
 ```
 fileName, filePath
@@ -74,7 +74,8 @@ file2, path/to/file2
 
 ```
 
-use command `npx hardhat batchUpload --file <CSV_PATH>` to perform the batch upload
+Use command `npx hardhat batchUpload --file <CSV_PATH>` to perform the batch upload.
+These uploads will be staggered API calls with a default delay of 1000ms (1 second). The optional parameter `--delay <ms>` can be included to set your own delay (recommended for large files).
 
 ## Mint From Terminal
 
