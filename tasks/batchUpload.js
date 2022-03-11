@@ -34,7 +34,8 @@ const uploadPromise = (
 
 task('batchUpload', 'upload files from csv file to MCS')
   .addParam('file', 'The path of the csv file')
-  .setAction(async ({ file }) => {
+  .addOptionalParam('delay', 'The delay between each upload (default 1000 ms)')
+  .setAction(async ({ file, delay }) => {
     const signer = await ethers.getSigner() // get signer for wallet address
     let csvArray = await csv().fromFile(file) // read csv
     // read file from filePath in csv
@@ -45,13 +46,13 @@ task('batchUpload', 'upload files from csv file to MCS')
       })),
     )
 
-    const delayIncrement = 500
-    let delay = 0
+    const delayIncrement = parseInt(delay) || 1000
+    let apiDelay = 0
 
     // send post request for each row (with delay)
     const requests = csvArray.map((row) => {
-      delay += delayIncrement // staggers each api call
-      return new Promise((resolve) => setTimeout(resolve, delay)).then(() =>
+      apiDelay += delayIncrement // staggers each api call
+      return new Promise((resolve) => setTimeout(resolve, apiDelay)).then(() =>
         uploadPromise(row.fileName, row.file, signer.address).then(
           (res) => res.data,
         ),
