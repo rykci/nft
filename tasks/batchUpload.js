@@ -1,7 +1,8 @@
 const { task } = require('hardhat/config')
 
+const { Agent } = require('https')
 const axios = require('axios')
-const fs = require('fs').promises
+const fs = require('fs')
 const FormData = require('form-data')
 
 const csv = require('csvtojson')
@@ -25,6 +26,8 @@ const uploadPromise = (
     {
       maxContentLength: Infinity,
       maxBodyLength: Infinity,
+      maxRedirects: 0,
+      agent: new Agent({ rejectUnauthorized: false }),
       headers: {
         ...form.getHeaders(),
       },
@@ -43,7 +46,7 @@ task('batchUpload', 'upload files from csv file to MCS')
 
     // read files from filePaths in csv
     const files = await Promise.all(
-      csvArray.map((row) => fs.readFile(row.filePath)),
+      csvArray.map((row) => fs.createReadStream(row.filePath)),
     )
 
     const delayIncrement = parseInt(delay) || 1000

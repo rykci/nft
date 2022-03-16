@@ -6,12 +6,12 @@ const { mint } = require('./helper/mint')
 
 task('mint', 'Create metadata JSON file for uploaded file and mint as NFT')
   .addParam('uri', 'ipfs URI of the file')
+  .addParam('cid', 'payload CID of the file')
   .addOptionalParam('name', 'name of the NFT')
   .addOptionalParam('desc', 'description of the NFT')
   .addOptionalParam('size', 'size of file')
-  .setAction(async ({ uri, name, desc, size }) => {
+  .setAction(async ({ uri, cid, name, desc, size }) => {
     const signer = await ethers.getSigner()
-    const cid = uri.split('/').pop()
     const hash = (await paymentInfo(cid)).tx_hash
     const metadata = generateMetadata(uri, name, desc, hash, size || '')
     console.log(metadata)
