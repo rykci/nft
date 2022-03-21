@@ -3,7 +3,7 @@ const Web3 = require('web3')
 
 const { mcsUpload } = require('./helper/upload')
 const { lockToken } = require('./helper/lockToken')
-const { getFileStatus, getDealList } = require('./helper/mcsApi')
+const { getFileStatus, getDealList, getDealDetail } = require('./helper/mcsApi')
 const { mint } = require('./helper/mint')
 
 class mcsClient {
@@ -24,68 +24,98 @@ class mcsClient {
     privateKey,
     rpcUrl = 'https://matic-mumbai.chainstacklabs.com',
   }) {
+    this.version = packageJson.version
     this.web3 = new Web3(rpcUrl)
+    if (privateKey) {
+      this.setPrivateKey(privateKey)
+    }
+  }
+
+  /**
+   * Adds wallet to web3 object
+   *
+   * @param {string} privateKey
+   */
+  setPrivateKey = (privateKey) => {
     this.web3.eth.accounts.wallet.add(privateKey)
     this.publicKey = this.web3.eth.accounts.privateKeyToAccount(
       privateKey,
     ).address
     this.privateKey = privateKey
-    this.version = packageJson.version
   }
 
   /**
    * Uploads file(s) using MCS upload API
-   * files is array of objects
-   * {
-   *    fileName: String
-   *    file: File
-   * }
-   * options include
-   * {
-   *    delay: staggers API calls for multiple files, default is 1000 ms
-   *    duration: duration of file on MCS, default is 525
-   *    fileType: set 1 for metadata files, default is 0
-   * }
    *
-   * @param {[fileName: string, file: File]} files
-   * @param {{delay: number, duration: number, fileType: number}} options
-   * @returns Array of upload API responses
+   * @param {[{fileName: string, file: Object}]} files - files should be file buffers, json stringify, or readstreams
+   * @param {{delay: number, duration: number, fileType: number}} [options]
+   * @returns {Array} Array of upload API responses
    */
   upload = async (files, options) =>
     await mcsUpload(this.publicKey, files, options)
 
   /**
-   * Makes payment for unpaid files on MCS.
+   * Makes payment for unpaid files on MCS. Throws error if file is already paid.
    *
    * @param {string} payloadCid
-   * @param {number} amount
-   * @returns payment transaction response
+   * @param {string} amount - pass amount as string to avoid BN precision errors
+   * @returns {Object} payment transaction response
    */
   makePayment = async (payloadCid, amount) =>
     await lockToken(this.web3, this.publicKey, payloadCid, amount)
 
   /**
+   * get filecoin status for file
    *
-   * @param {string} payloadCid
-   * @returns file status on MCS
+   * @param {string} dealCid
+   * @returns {Object} file status on MCS
    */
-  checkStatus = async (payloadCid) => await getFileStatus(payloadCid)
+  checkStatus = async (dealCid) => await getFileStatus(dealCid)
 
   /**
    * Mints file as NFT availiable to view on Opensea
-   * @param {string} cid
-   * @param {{name: string, description: string, image: URL, tx_hash: string}} nft
-   * @returns mint info reponse object
+   *
+   * @param {string} payloadCid
+   * @param {{name: string, description: string, image: string, tx_hash: string}} nft
+   * @returns {Object} mint info reponse object
    */
-  mintAsset = async (cid, nft) =>
-    await mint(this.web3, this.publicKey, cid, nft)
+  mintAsset = async (payloadCid, nft) =>
+    await mint(this.web3, this.publicKey, payloadCid, nft)
 
   /**
    * List the user's uploaded files on MCS
-   * @returns API list reponse
+   *
+   * @param {string} [wallet] - shows files for an address
+   * @param {string} [payloadCid] - filter by payload_cid
+   * @param {string} [fileName] - filter by file_name
+   * @param {number} [pageNumber=1]
+   * @param {number} [pageSize=10]
+   *
+   * @returns {Array} API list reponse
    */
-  listUploads = async (pageNumber = 1) =>
-    await getDealList(this.publicKey, pageNumber)
+  listUploads = async (
+    wallet,
+    payloadCid,
+    fileName,
+    pageNumber = 1,
+    pageSize = 10,
+  ) =>
+    await getDealList(
+      wallet || this.publicKey,
+      payloadCid,
+      fileName,
+      pageNumber,
+      pageSize,
+    )
+
+  /**
+   *
+   * @param {string} payloadCid
+   * @param {number} [dealId=0] - dealId can be found from listUploads
+   * @returns
+   */
+  getFileDetails = async (payloadCid, dealId = 0) =>
+    await getDealDetail(payloadCid, dealId)
 }
 
 module.exports = { mcsClient }

@@ -30,8 +30,6 @@ const lockToken = async (web3, payer, cid, amount) => {
     )
     .send(optionsObj)
 
-  console.log(approveTx.transactionHash)
-
   const paymentInstance = new web3.eth.Contract(
     swanPaymentABI,
     gatewayContractAddress,
@@ -48,8 +46,6 @@ const lockToken = async (web3, payer, cid, amount) => {
     size: 0,
     copyLimit: 1,
   }
-
-  console.log(lockObj)
 
   const tx = await paymentInstance.methods
     .lockTokenPayment(lockObj)
