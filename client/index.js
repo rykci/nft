@@ -27,7 +27,7 @@ class mcsClient {
     this.version = packageJson.version
     this.web3 = new Web3(rpcUrl)
     if (privateKey) {
-      this.setPrivateKey(privateKey)
+      this.setAccount(privateKey)
     }
   }
 
@@ -36,12 +36,11 @@ class mcsClient {
    *
    * @param {string} privateKey
    */
-  setPrivateKey = (privateKey) => {
+  setAccount = (privateKey) => {
     this.web3.eth.accounts.wallet.add(privateKey)
     this.publicKey = this.web3.eth.accounts.privateKeyToAccount(
       privateKey,
     ).address
-    this.privateKey = privateKey
   }
 
   /**
