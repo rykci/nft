@@ -1,7 +1,7 @@
 const axios = require('axios')
 const FormData = require('form-data')
 const { Agent } = require('https')
-const { MCS_API } = require('./contants')
+const { MCS_API } = require('./constants')
 
 const uploadPromise = (
   fileName,
@@ -40,7 +40,7 @@ const mcsUpload = async (address, files, options) => {
         file.fileName,
         file.file,
         address,
-        options?.duration || 525,
+        options?.duration || 180,
         options?.fileType || 0,
       ).then((res) => {
         return res.data

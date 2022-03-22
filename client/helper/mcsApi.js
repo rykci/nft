@@ -1,5 +1,5 @@
 const axios = require('axios')
-const { MCS_API } = require('./contants')
+const { MCS_API } = require('./constants')
 
 const getParams = async () => {
   try {

@@ -93,9 +93,9 @@ class mcsClient {
    * @returns {Array} API list reponse
    */
   listUploads = async (
-    wallet,
-    payloadCid,
-    fileName,
+    wallet = this.publicKey,
+    payloadCid = '',
+    fileName = '',
     pageNumber = 1,
     pageSize = 10,
   ) =>
