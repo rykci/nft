@@ -122,7 +122,7 @@ Use USDC tokens to pay for your _unpaid_ uploaded file. You need the `payload_ci
 const payloadCid = uploadResponses[0].data.payload_cid
 // bafkqadkimvwgy3zmeblw64tmmqqq
 
-const tx = await mcs.makePayment(payloadCid, '10')
+const tx = await client.makePayment(payloadCid, '10')
 console.log(tx.transactionHash)
 ```
 
@@ -133,13 +133,13 @@ Note that `amount` is a type String. This is to avoid Big Number precision error
 Check the Filecoin storage status of a file using it's `deal_cid`
 
 ```js
-const uploadInfo = await mcs.listUploads(
+const uploadInfo = await client.listUploads(
   mcs.publicKey,
   'bafkqadkimvwgy3zmeblw64tmmqqq',
 )
 const dealCid = uploadInfo.data[0].deal_cid
 
-const fileStatus = await mcs.checkStatus(dealCid)
+const fileStatus = await client.checkStatus(dealCid)
 console.log(fileStatus)
 ```
 
@@ -179,7 +179,7 @@ console.log(await client.listUploads(client.publicKey, '', 'file1')
 Using `listUploads`, you can retreive the `payload_cid` and `deal_id` of a file. Calling this function will return an object containing the details of the file.
 
 ```
-console.log(await mcs.getFileDetails(payloadCid, 0))
+console.log(await client.getFileDetails(payloadCid, 0))
 ```
 
 # Contributing
