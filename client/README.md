@@ -19,12 +19,12 @@
 
 A client library for the https://mcs.filswan.com/ service. It provides a convenient interface for working with the MCS API from a web browser or Node.js. This client has the following functionalities:
 
-- **POST**    upload file to Filswan IPFS gate way
-- make payment to swan filecoin storage gate way
-- **GET**    status from filecoin
-- **POST**    mint asset as NFT
-- **GET**    list of files uploaded
-- **GET**    files by cid
+- [**POST**](#uploadfiles-options---uploading-files)    upload file to Filswan IPFS gate way
+- [**POST**](#makepaymentpayloadcid-amount---pay-for-file-storage)    make payment to swan filecoin storage gate way
+- [**GET**](checkstatusdealcid---check-file-status-from-filecoin)       status from filecoin
+- [**POST**](#mintassetpayloadcid-nft---mint-asset-as-nft)    mint asset as NFT
+- [**GET**](#listuploadswallet-payloadcid-filename-pagenumber-pagesize---view-uploaded-files)       list of files uploaded
+- [**GET**](#getfiledetailspayloadcid-dealid-view-file-details)       files by cid
 
 ## Prerequisites
 
