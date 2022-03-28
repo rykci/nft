@@ -16,15 +16,23 @@ const mcsUpload = async (
 
   console.log('Uploading file to MCS...')
   try {
-    const response = await axios.post(
-      `${network.config.mcs_api}/storage/ipfs/upload`,
-      form,
-      {
+    const startTime = new Date().getTime()
+    const response = await axios
+      .post(`${network.config.mcs_api}/storage/ipfs/upload`, form, {
+        maxContentLength: Infinity,
+        maxBodyLength: Infinity,
         headers: {
           ...form.getHeaders(),
         },
-      },
-    )
+      })
+      .then((res) => {
+        console.log(
+          `Upload ${file_type == 1 ? 'Metadata' : ''} Time: ${
+            new Date().getTime() - startTime
+          } ms`,
+        )
+        return res
+      })
     return response.data
   } catch (err) {
     // Handle Error Here

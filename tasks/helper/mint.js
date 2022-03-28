@@ -13,8 +13,10 @@ const mint = async (signer, metadataUri, cid) => {
 
     // Mint NFT
     console.log('Minting...')
+    const startTime = new Date().getTime()
     const tx = await databaseMinter.mintData(signer.address, metadataUri)
     await tx.wait()
+    console.log(`Mint Time: ${new Date().getTime() - startTime} ms`)
 
     // Get tokenID
     const tokenId = await databaseMinter.totalSupply()
@@ -29,10 +31,13 @@ const mint = async (signer, metadataUri, cid) => {
     }
 
     try {
-      const mintInfoResponse = await axios.post(
-        `${network.config.mcs_api}/storage/mint/info`,
-        mintInfoJson,
-      )
+      const startTime2 = new Date().getTime()
+      const mintInfoResponse = await axios
+        .post(`${network.config.mcs_api}/storage/mint/info`, mintInfoJson)
+        .then((res) => {
+          console.log(`Mint Info Time: ${new Date().getTime() - startTime2} ms`)
+          return res
+        })
     } catch (err) {
       console.log('write mint info error')
       console.log(err)

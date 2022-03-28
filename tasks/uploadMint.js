@@ -1,5 +1,5 @@
 const { task } = require('hardhat/config')
-const fs = require('fs').promises
+const fs = require('fs')
 const axios = require('axios')
 const { mcsUpload } = require('./helper/mcsUpload')
 const {
@@ -17,7 +17,7 @@ task('uploadMint', 'single task to upload file, lock tokens, and mint nft')
   .setAction(async ({ file, name, desc }) => {
     // get signer
     const signer = await ethers.getSigner()
-    const _file = await fs.readFile(file) // read file
+    const _file = fs.createReadStream(file) // read file
     const fileName = file.split('/').pop()
 
     // upload file to MCS
@@ -25,7 +25,7 @@ task('uploadMint', 'single task to upload file, lock tokens, and mint nft')
     const payload_cid = uploadResponse.data.payload_cid
     console.log(uploadResponse)
 
-    const fileSize = (await fs.stat(file)).size
+    const fileSize = (await fs.promises.stat(file)).size
     console.log('file size: ' + fileSize + ' bytes')
 
     // check if the file needs payment
